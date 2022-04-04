@@ -158,20 +158,24 @@ evaluate(v::Valuation, α::BinaryOperation)::Bool = evaluate(v, operator(α), op
 
 nnf(c::Constant) = c
 nnf(α::Atom) = α
-nnf(::Negation, c::Constant) = Not(c)
-nnf(::Negation, α::Atom) = Not(α)
+
 nnf(::Negation, ::Negation, α::Formula) = nnf(α)
 nnf(u::UnaryOperator, α::UnaryOperation) = nnf(u, operator(α), operand(α))
+
+nnf(::Negation, α::Atom) = Not(α)
+nnf(::Negation, c::Constant) = Not(c)
+nnf(α::UnaryOperation) = nnf(operator(α), operand(α))
+
 nnf(::Negation, ::Implication, α::Formula, β::Formula) = nnf(α ∧ ¬β)
 nnf(::Negation, ::Disjunction, α::Formula, β::Formula) = nnf(¬α ∧ ¬β)
 nnf(::Negation, ::Conjunction, α::Formula, β::Formula) = nnf(¬α ∨ ¬β)
 nnf(::Negation, ::Biconditional, α::Formula, β::Formula) = nnf((α ∧ ¬β) ∨ (¬α ∧ β))
 nnf(u::UnaryOperator, α::BinaryOperation) = nnf(u, operator(α), operand1(α), operand2(α))
+
 nnf(::Implication, α::Formula, β::Formula) = nnf(¬α ∨ β)
 nnf(::Biconditional, α::Formula, β::Formula) = nnf((α ∧ β) ∨ (¬α ∧ ¬β))
 nnf(binop::BinaryOperator, α::Formula, β::Formula) = BinaryOperation(binop, nnf(α), nnf(β))
 nnf(α::BinaryOperation) = nnf(operator(α), operand1(α), operand2(α))
-nnf(α::UnaryOperation) = nnf(operator(α), operand(α))
 
 
 #distributive(c::Constant) = c
