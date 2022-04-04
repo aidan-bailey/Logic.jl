@@ -162,25 +162,34 @@ nnf(::Negation, c::Constant) = Not(c)
 nnf(::Negation, α::Atom) = Not(α)
 nnf(::Negation, ::Negation, α::Formula) = nnf(α)
 nnf(u::UnaryOperator, α::UnaryOperation) = nnf(u, operator(α), operand(α))
-nnf(::Negation, ::Implication, α::Formula, β::Formula) = nnf(α) ∧ nnf(¬β)
-nnf(::Negation, ::Disjunction, α::Formula, β::Formula) = nnf(¬α) ∧ nnf(¬β)
-nnf(::Negation, ::Conjunction, α::Formula, β::Formula) = nnf(¬α) ∨ nnf(¬β)
-nnf(::Negation, ::Biconditional, α::Formula, β::Formula) = (nnf(α) ∧ nnf(¬β)) ∨ (nnf(¬α) ∧ nnf(β))
+nnf(::Negation, ::Implication, α::Formula, β::Formula) = nnf(α ∧ ¬β)
+nnf(::Negation, ::Disjunction, α::Formula, β::Formula) = nnf(¬α ∧ ¬β)
+nnf(::Negation, ::Conjunction, α::Formula, β::Formula) = nnf(¬α ∨ ¬β)
+nnf(::Negation, ::Biconditional, α::Formula, β::Formula) = nnf((α ∧ ¬β) ∨ (¬α ∧ β))
 nnf(u::UnaryOperator, α::BinaryOperation) = nnf(u, operator(α), operand1(α), operand2(α))
-nnf(::Implication, α::Formula, β::Formula) = nnf(¬α) ∨ nnf(β)
+nnf(::Implication, α::Formula, β::Formula) = nnf(¬α ∨ β)
+nnf(::Biconditional, α::Formula, β::Formula) = nnf((α ∧ β) ∨ (¬α ∧ ¬β))
 nnf(binop::BinaryOperator, α::Formula, β::Formula) = BinaryOperation(binop, nnf(α), nnf(β))
 nnf(α::BinaryOperation) = nnf(operator(α), operand1(α), operand2(α))
 nnf(α::UnaryOperation) = nnf(operator(α), operand(α))
 
-#distributive(α::UnaryOperation) = distributive(operand(α))
-#distributive(::Disjunction, α::BinaryOperation, β::Formula) = operator(α) isa Conjunction ? (β ∨ operand1(α)) ∧ (β ∨ operand2(α)) : distributive(α) ∨ distributive(β)
-#distributive(α::Formula, β::BinaryOperation) = operator(β) isa Conjunction ? (α ∨ operand1(β)) ∧ (α ∨ operand2(β)) : distributive(α) ∨ distributive(β)
-#distributive(α::BinaryOperation, β::BinaryOperation) = α.operator isa Conjunction ? (β ∨ operand1(α)) ∧ (β ∨ operand2(α)) : (α ∨ operand1(β)) ∧ (α ∨ operand2(β))
-#distributive(α::BinaryOperation) = α isa Disjunction ? distributive(operator(α), operand1(α), operand2(α)) : distributive(operand1(α), operand2(α))
+
+#distributive(c::Constant) = c
+#distributive(α::Atom) = α
+#distributive(α::UnaryOperation) = UnaryOperation(operator(α), distributive(operand(α)))
+#distributive(::Conjunction, α::Formula, β::Formula) = distributive(α) ∧ distributive(β)
+#distributive(::Disjunction, α::Formula, β::Formula) = distributive(α) ∨ distributive(β)
+#distributive(α::BinaryOperation) = distributive(operator(α), operand1(α), operand2(α))
 
 #val = Valuation(Atom("A") => false, Atom("B") => false)
 #form = Not(Or(And("A", "B"), ⊤))
-#println(nnf(¬("p"∨(¬"p"∧"q"))→"d"))
+#form = (¬("p"∨(¬"p"∧"q"))→"d")↔"e"
+#nnfform = nnf(form)
+#print(nnfform)
+#print(distributive("C" ∨ ("A" ∧ "B")))
+#for i in 0:10
+#    println(distributive(nnfform))
+#end
 #"A" → "B" (p(pq))
 
 end # module
