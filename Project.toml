@@ -1,0 +1,7 @@
+name = "PropositionalLogic"
+uuid = "72b20240-96a8-4426-847a-0275d91505b7"
+authors = ["Aidan Bailey <aidan.j.bailey@outlook.com>"]
+version = "0.1.0"
+
+[deps]
+PicoSAT = "ff2beb65-d7cd-5ff1-a187-74671133a339"
