@@ -157,7 +157,14 @@ export Equals
 export ↔
 
 "Propositional interpretation type."
-const Interpretation = Dict{Atom,Bool}
+struct Interpretation
+    assignments :: Dict{Atom, Bool}
+    Interpretation(ps::Pair{Atom, Bool}...) = new(Dict{Atom, Bool}(ps))
+end
+Base.show(io::IO, i::Interpretation) = show(io, i.assignments)
+Base.print(io::IO, i::Interpretation) = print(io, i.assignments)
+assign(I::Interpretation, α::Atom)::Bool = I.assignments[α]
+export assign
 export Interpretation
 
 end
