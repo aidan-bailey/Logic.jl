@@ -3,6 +3,7 @@ module SatSolver
 import PicoSAT
 using ..PropositionalSyntax
 
+"Acquire the disjunctive clauses from a propositional formula in cnf." # This method is not accurate TODO
 function disjunctiveclauses(α::Formula)
 
     disjunctiveclauses(::Disjunction, α::BinaryOperation{Disjunction}, β::BinaryOperation{Disjunction}) = [vcat(
@@ -27,6 +28,7 @@ function disjunctiveclauses(α::Formula)
 
 end
 
+"Convert a propositional formula in cnf into pico cnf format." # This method is sound and complete but could be more efficient
 function picocnf(α::Formula)
     dclauses = disjunctiveclauses(α)
     picoclauses = []
@@ -49,12 +51,14 @@ function picocnf(α::Formula)
 
 end
 
+"Check if a propositional formula is satisfiable." # Efficient
 function satisfiable(α::Formula)
     picoclauses, _ = picocnf(α)
     return PicoSAT.solve(picoclauses) != :unsatisfiable
 end
 
-function models(α::Formula)::Set{Interpretation}
+"Get the models of a propositional formula."
+function models(α::Formula)::Set{Interpretation} # This is fine
     picoclauses, namedict = picocnf(α)
     rossettadict = Dict(value => key for (key, value) in namedict)
     picomodels = PicoSAT.itersolve(picoclauses)

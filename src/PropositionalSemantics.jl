@@ -66,7 +66,7 @@ export cnf
 satisfiable(α::Formula)::Bool = SatSolver.satisfiable(α)
 export satisfiable
 
-"Return the models of a propositional formula."
+"Get the models of a propositional formula."
 models(α)::Set{Interpretation} = SatSolver.models(α)
 export models
 
