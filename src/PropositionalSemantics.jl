@@ -51,7 +51,7 @@ distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::BinaryOperatio
 distributive(::Disjunction, α::Formula, β::Formula) = distributive(α) ∨ distributive(β)
 export distributive
 
-"Convert a propositional formula to conjunctive normal form."
+"Convert a propositional formula to conjunctive normal form." # This could probably be a bit more efficient
 function cnf(α::Formula)
     form=nnf(α)
     while form != distributive(form)
@@ -107,6 +107,7 @@ export disjunctiveclauses
 #        push!(picoclauses, picoclause)
 #    end
 #    return picoclauses, namedict
+#
 #end
 
 #function satisfiable(α::Formula)
