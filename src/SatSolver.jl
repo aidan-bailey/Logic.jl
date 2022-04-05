@@ -54,25 +54,25 @@ function satisfiable(α::Formula)
     return PicoSAT.solve(picoclauses) != :unsatisfiable
 end
 
-#function models(α::Formula)::Vector{Interpretation}
-#    picoclauses, namedict = picocnf(α)
-#    rossettadict = Dict(value => key for (key, value) in namedict)
-#    picomodels = PicoSAT.itersolve(picoclauses)
-#    if isnothing(picomodels)
-#        return []
-#    end
-#    result = []
-#    for picomodel in picomodels
-#        valuation = Interpretation()
-#        for literal in picomodel
-#            piconame = abs(literal)
-#            atom = Atom(get(rossettadict, piconame, nothing))
-#            truthvalue = literal/piconame > 0
-#            push!(valuation, atom => truthvalue)
-#        end
-#        push!(result, valuation)
-#    end
-#    return result
-#end
+function models(α::Formula)::Set{Interpretation}
+    picoclauses, namedict = picocnf(α)
+    rossettadict = Dict(value => key for (key, value) in namedict)
+    picomodels = PicoSAT.itersolve(picoclauses)
+    if isnothing(picomodels)
+        return []
+    end
+    result = []
+    for picomodel in picomodels
+        valuation = Interpretation()
+        for literal in picomodel
+            piconame = abs(literal)
+            atom = Atom(get(rossettadict, piconame, nothing))
+            truthvalue = literal/piconame > 0
+            push!(valuation, atom => truthvalue)
+        end
+        push!(result, valuation)
+    end
+    return Set(result)
+end
 
 end
