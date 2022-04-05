@@ -6,7 +6,6 @@ atoms(::Constant)::Set{Atom} = Set()
 atoms(α::Atom)::Set{Atom} = Set([α])
 atoms(α::UnaryOperation)::Set{Atom} = atoms(operand(α))
 atoms(α::BinaryOperation)::Set{Atom} = union(atoms(operand1(α)), atoms(operand2(α)))
-atoms(v::Interpretation)::Set{Atom} = Set(keys(v))
 export atoms
 
 satisfies(::Interpretation, ::Tautology)::Bool = true
