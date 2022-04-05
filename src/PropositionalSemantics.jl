@@ -2,53 +2,56 @@ module PropositionalSemantics
 
 using ..PropositionalSyntax
 
+"Get atoms contained in a propositional formula." # Efficient
+atoms(α::Formula)::Set{Atom} = error("Atoms does not yet support $(typeof(α)).")
 atoms(::Constant)::Set{Atom} = Set()
 atoms(α::Atom)::Set{Atom} = Set([α])
 atoms(α::UnaryOperation)::Set{Atom} = atoms(operand(α))
 atoms(α::BinaryOperation)::Set{Atom} = union(atoms(operand1(α)), atoms(operand2(α)))
 export atoms
 
+"Check if an interpretation satisfies a propostional formula." # Efficient
+satisfies(_::Interpretation, α::Formula)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
 satisfies(::Interpretation, ::Tautology)::Bool = true
 satisfies(::Interpretation, ::Contradiction)::Bool = false
-satisfies(v::Interpretation, α::Atom)::Bool = haskey(v, α) ? get(v, α, nothing) : error("Interpretation, $v, does not contain assignment for atom $α.")
-satisfies(v::Interpretation, ::Negation, α::Formula)::Bool = !satisfies(v, α)
-satisfies(v::Interpretation, α::UnaryOperation)::Bool = satisfies(v, operator(α), operand(α))
-satisfies(v::Interpretation, ::Conjunction, α::Formula, β::Formula)::Bool = satisfies(v, α) && satisfies(v, β)
-satisfies(v::Interpretation, ::Disjunction, α::Formula, β::Formula)::Bool = satisfies(v, α) || satisfies(v, β)
-satisfies(v::Interpretation, ::Implication, α::Formula, β::Formula)::Bool = satisfies(v, α) <= satisfies(v, β)
-satisfies(v::Interpretation, ::Biconditional, α::Formula, β::Formula)::Bool = satisfies(v, α) == satisfies(v, β)
-satisfies(v::Interpretation, α::BinaryOperation)::Bool = satisfies(v, operator(α), operand1(α), operand2(α))
+satisfies(v::Interpretation, α::Atom)::Bool = assign(v, α)
+satisfies(_::Interpretation, α::UnaryOperation)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
+satisfies(v::Interpretation, α::UnaryOperation{Negation})::Bool = !satisfies(v, α)
+satisfies(_::Interpretation, α::BinaryOperation)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
+satisfies(v::Interpretation, α::BinaryOperation{Conjunction})::Bool = satisfies(v, operand1(α)) && satisfies(v, operand2(α))
+satisfies(v::Interpretation, α::BinaryOperation{Disjunction})::Bool = satisfies(v, operand1(α)) || satisfies(v, operand2(α))
+satisfies(v::Interpretation, α::BinaryOperation{Implication})::Bool = satisfies(v, operand1(α)) <= satisfies(v, operand2(α))
+satisfies(v::Interpretation, α::BinaryOperation{Biconditional})::Bool = satisfies(v, operand1(α)) == satisfies(v, operand2(α))
 export satisfies
 
-nnf(c::Constant) = c
-nnf(α::Atom) = α
-nnf(::Negation, ::Negation, α::Formula) = nnf(α)
-nnf(u::UnaryOperator, α::UnaryOperation) = nnf(u, operator(α), operand(α))
-nnf(::Negation, α::Atom) = Not(α)
-nnf(::Negation, c::Constant) = Not(c)
+"Convert a propositional formula into negation normal form." # Efficient
+nnf(α::Formula) = α
 nnf(α::UnaryOperation) = nnf(operator(α), operand(α))
-nnf(::Negation, ::Implication, α::Formula, β::Formula) = nnf(α ∧ ¬β)
-nnf(::Negation, ::Disjunction, α::Formula, β::Formula) = nnf(¬α ∧ ¬β)
-nnf(::Negation, ::Conjunction, α::Formula, β::Formula) = nnf(¬α ∨ ¬β)
-nnf(::Negation, ::Biconditional, α::Formula, β::Formula) = nnf((α ∧ ¬β) ∨ (¬α ∧ β))
-nnf(u::UnaryOperator, α::BinaryOperation) = nnf(u, operator(α), operand1(α), operand2(α))
-nnf(::Implication, α::Formula, β::Formula) = nnf(¬α ∨ β)
-nnf(::Biconditional, α::Formula, β::Formula) = nnf((α ∧ β) ∨ (¬α ∧ ¬β))
-nnf(binop::BinaryOperator, α::Formula, β::Formula) = BinaryOperation(binop, nnf(α), nnf(β))
-nnf(α::BinaryOperation) = nnf(operator(α), operand1(α), operand2(α))
+nnf(u::UnaryOperator, α::Formula) = UnaryOperation(u, nnf(α))
+nnf(::Negation, α::UnaryOperation{Negation}) = nnf(operand(α))
+nnf(::Negation, α::BinaryOperation{Implication}) = nnf(operand1(α) ∧ ¬operand2(α))
+nnf(::Negation, α::BinaryOperation{Disjunction}) = nnf(¬operand1(α) ∧ ¬operand2(α))
+nnf(::Negation, α::BinaryOperation{Conjunction}) = nnf(¬operand1(α) ∨ ¬operand2(α))
+nnf(::Negation, α::BinaryOperation{Biconditional}) = nnf((operand1(α) ∧ ¬operand2(α)) ∨ (¬operand1(α) ∧ operand2(α)))
+nnf(α::BinaryOperation) = BinaryOperation(operator(α), nnf(operand1(α)), nnf(operand2(α)))
+nnf(α::BinaryOperation{Biconditional}) = nnf((operand1(α) ∧ operand2(α)) ∨ (¬operand1(α) ∧ ¬operand2(α)))
+nnf(α::BinaryOperation{Implication}) = nnf(¬operand1(α) ∨ operand2(α))
 export nnf
 
+"Apply the distributive law propogation through a propositional formula." # Efficient
+distributive(α::Formula) = error("Distributive does not yet support $(typeof(α)).")
 distributive(c::Constant) = c
 distributive(α::Atom) = α
 distributive(α::UnaryOperation) = UnaryOperation(operator(α), distributive(operand(α)))
+distributive(α::BinaryOperation) = distributive(operator(α), operand1(α), operand2(α))
 distributive(binop::BinaryOperator, α::Formula, β::Formula) = BinaryOperation(binop, distributive(α), distributive(β))
 distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::Formula) = distributive((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
 distributive(::Disjunction, α::Formula, β::BinaryOperation{Conjunction}) = distributive((α ∨ operand1(β)) ∧ (α ∨ operand2(β)))
 distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = distributive((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
 distributive(::Disjunction, α::Formula, β::Formula) = distributive(α) ∨ distributive(β)
-distributive(α::BinaryOperation) = distributive(operator(α), operand1(α), operand2(α))
 export distributive
 
+"Convert a propositional formula to conjunctive normal form."
 function cnf(α::Formula)
     form=nnf(α)
     while form != distributive(form)
@@ -69,7 +72,6 @@ function disjunctiveclauses(α::Formula)
     disjunctiveclauses(::Disjunction, α::Formula, β::BinaryOperation{Disjunction}) = [vcat(vcat(disjunctiveclauses(operand1(β)), disjunctiveclauses(operand2(β))), disjunctiveclauses(α))]
     disjunctiveclauses(::Disjunction, α::BinaryOperation{Disjunction}, β::Formula) = [vcat(vcat(disjunctiveclauses(operand1(α)), disjunctiveclauses(operand2(α))), disjunctiveclauses(β))]
     disjunctiveclauses(::Disjunction, α::Formula, β::Formula) = [vcat(disjunctiveclauses(α), disjunctiveclauses(β))]
-
 
     disjunctiveclauses(::Conjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = [disjunctiveclauses(α)..., disjunctiveclauses(β)...]
     disjunctiveclauses(::Conjunction, α::Formula, β::BinaryOperation{Conjunction}) = [disjunctiveclauses(α), disjunctiveclauses(β)...]
