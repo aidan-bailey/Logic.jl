@@ -62,7 +62,12 @@ function cnf(α::Formula)
 end
 export cnf
 
-"Check if a formula is satisfiable."
-satisfiable(α::Formula) = SatSolver.satisfiable(α)
+"Check if a propositional formula is satisfiable."
+satisfiable(α::Formula)::Bool = SatSolver.satisfiable(α)
+export satisfiable
+
+"Return the models of a propositional formula."
+models(α)::Set{Interpretation} = SatSolver.models(α)
+export models
 
 end
