@@ -177,20 +177,14 @@ nnf(::Biconditional, α::Formula, β::Formula) = nnf((α ∧ β) ∨ (¬α ∧ �
 nnf(binop::BinaryOperator, α::Formula, β::Formula) = BinaryOperation(binop, nnf(α), nnf(β))
 nnf(α::BinaryOperation) = nnf(operator(α), operand1(α), operand2(α))
 
-
 distributive(c::Constant) = c
 distributive(α::Atom) = α
 distributive(α::UnaryOperation) = UnaryOperation(operator(α), distributive(operand(α)))
 distributive(binop::BinaryOperator, α::Formula, β::Formula) = BinaryOperation(binop, distributive(α), distributive(β))
-function distributive(::Disjunction, α::Formula, β::Formula)
-    if α isa BinaryOperation && operator(α) isa Conjunction
-        return distributive((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
-    end
-    if β isa BinaryOperation && operator(β) isa Conjunction
-        return distributive((α ∨ operand1(β)) ∧ (α ∨ operand2(β)))
-    end
-    return distributive(α) ∨ distributive(β)
-end
+distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::Formula) = distributive((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
+distributive(::Disjunction, α::Formula, β::BinaryOperation{Conjunction}) = distributive((α ∨ operand1(β)) ∧ (α ∨ operand2(β)))
+distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = distributive((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
+distributive(::Disjunction, α::Formula, β::Formula) = distributive(α) ∨ distributive(β)
 distributive(α::BinaryOperation) = distributive(operator(α), operand1(α), operand2(α))
 
 function cnf(α::Formula)
@@ -227,6 +221,5 @@ form = (("A"∧"B")∨("C"∧"D"))∨"E"
 #println(cnf(form))
 #println(disjunctiveclauses(form))
 
-println(typeof(Not("A")))
 
 end # module
