@@ -27,14 +27,15 @@ export satisfies
 ⊢ = satisfies
 export ⊢
 
-"Check if a propositional formula is satisfiable."
+"Check if a propositional formula is satisfiable." # Efficient
 satisfiable(α::Formula)::Bool = SatSolver.satisfiable(α)
 export satisfiable
 
-"Get the models of a propositional formula."
+"Get the models of a propositional formula." # Efficient
 models(α::Formula)::Set{Interpretation} = SatSolver.models(α)
 export models
 
+"Check if propositional formula α entails propositional formula β." # Efficient and elegant wow!
 entails(α::Formula, β::Formula) = models(α) ⊆ models(β)
 export entails
 #⊧ = entails #I wish
