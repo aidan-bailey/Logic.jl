@@ -12,7 +12,9 @@ export Constant
 struct Tautology <: Constant end
 export Tautology
 ⊤ = Tautology()
+export ⊤
 tautology = Tautology()
+export tautology
 Base.show(io::IO, ::Tautology) = show(io, "⊤")
 Base.print(io::IO, ::Tautology) = print(io, "⊤")
 
@@ -20,7 +22,9 @@ Base.print(io::IO, ::Tautology) = print(io, "⊤")
 struct Contradiction <: Constant end
 export Contradiction
 ⊥ = Contradiction()
+export ⊥
 contradiction = Contradiction()
+export contradiction
 Base.show(io::IO, ::Contradiction) = show(io, "⊥")
 Base.print(io::IO, ::Contradiction) = print(io, "⊥")
 
