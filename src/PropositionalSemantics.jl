@@ -28,15 +28,33 @@ export satisfies
 export ⊢
 
 "Check if a propositional formula is satisfiable." # Efficient
-satisfiable(α::Formula)::Bool = SatSolver.satisfiable(α)
-export satisfiable
+issatisfiable(α::Formula)::Bool = SatSolver.satisfiable(α)
+export issatisfiable
 
 "Get the models of a propositional formula." # Efficient
 models(α::Formula)::Set{Interpretation} = SatSolver.models(α)
 export models
 
+"Check if propositional formula α is a tautology." # Efficient
+istautology(::Contradiction)::Bool = false
+istautology(::Tautology)::Bool = true
+istautology(α::Formula)::Bool = length(models(α)) == 2^length(atoms(α))
+export isvalid
+
+"Check if propositional formula α is a contradiction."
+iscontradiction(::Contradiction)::Bool = true
+iscontradiction(::Tautology)::Bool = false
+iscontradiction(α::Formula) = isempty(models(α))
+
 "Check if propositional formula α entails propositional formula β." # Efficient and elegant wow!
 entails(α::Formula, β::Formula) = models(α) ⊆ models(β)
+entails(α::Formula, ::Tautology) = istautology(α)
+entails(α::Formula, ::Contradiction) = iscontradiction(α)
+entails(::Tautology, ::Tautology) = true            # I think?
+entails(::Contradiction, ::Contradiction) = true    # I think?
+entails(::Contradiction, ::Tautology) = true
+entails(::Tautology, ::Contradiction) = false
+
 export entails
 #⊧ = entails #I wish
 #export ⊧    #upon a fish
