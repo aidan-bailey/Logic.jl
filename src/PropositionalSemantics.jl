@@ -15,7 +15,7 @@ export atoms
 satisfies(::Interpretation, α::Formula)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
 satisfies(::Interpretation, ::Tautology)::Bool = true
 satisfies(::Interpretation, ::Contradiction)::Bool = false
-satisfies(v::Interpretation, α::Atom)::Bool = assign(v, α)
+satisfies(v::Interpretation, α::Atom)::Bool = v[α]
 satisfies(::Interpretation, α::UnaryOperation)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
 satisfies(v::Interpretation, α::UnaryOperation{Negation})::Bool = !satisfies(v, α)
 satisfies(::Interpretation, α::BinaryOperation)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
