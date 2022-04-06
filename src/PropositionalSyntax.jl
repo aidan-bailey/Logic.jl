@@ -70,12 +70,12 @@ struct Negation <: UnaryOperator end
 export Negation
 Base.show(io::IO, ::Negation) = show(io, "¬")
 Base.print(io::IO, ::Negation) = print(io, "¬")
-Not(α::Union{Formula,String}) = UnaryOperation(
+not(α::Union{Formula,String}) = UnaryOperation(
     Negation(),
     α isa String ? Atom(α) : α
 )
-export Not
-¬ = Not
+export not
+¬ = not
 export ¬
 
 "Propositional binary operator supertype."
@@ -113,11 +113,11 @@ struct Disjunction <: BinaryOperator end
 export Disjunction
 Base.show(io::IO, ::Disjunction) = show(io, "∨")
 Base.print(io::IO, ::Disjunction) = print(io, "∨")
-Or(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
+or(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
     Disjunction(), α isa String ? Atom(α) : α, β isa String ? Atom(β) : β
 )
-export Or
-∨ = Or
+export or
+∨ = or
 export ∨
 
 "Propositional conjunction operator type."
@@ -125,11 +125,11 @@ struct Conjunction <: BinaryOperator end
 export Conjunction
 Base.show(io::IO, ::Conjunction) = show(io, "∧")
 Base.print(io::IO, ::Conjunction) = print(io, "∧")
-And(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
+and(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
     Conjunction(), α isa String ? Atom(α) : α, β isa String ? Atom(β) : β
 )
-export And
-∧ = And
+export and
+∧ = and
 export ∧
 
 "Propositional implication operator type."
@@ -137,11 +137,11 @@ struct Implication <: BinaryOperator end
 export Implication
 Base.show(io::IO, ::Implication) = show(io, "→")
 Base.print(io::IO, ::Implication) = print(io, "→")
-Implies(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
+implies(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
     Implication(), α isa String ? Atom(α) : α, β isa String ? Atom(β) : β
 )
-export Implies
-→ = Implies
+export implies
+→ = implies
 export →
 
 "Propositional biconditional operator type."
@@ -149,11 +149,11 @@ struct Biconditional <: BinaryOperator end
 export Biconditional
 Base.show(io::IO, ::Biconditional) = show(io, "↔")
 Base.print(io::IO, ::Biconditional) = print(io, "↔")
-Equals(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
+equals(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
     Biconditional(), α isa String ? Atom(α) : α, β isa String ? Atom(β) : β
 )
-export Equals
-↔ = Equals
+export equals
+↔ = equals
 export ↔
 
 "Propositional interpretation type."
