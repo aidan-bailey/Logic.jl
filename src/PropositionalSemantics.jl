@@ -24,13 +24,20 @@ satisfies(v::Interpretation, α::BinaryOperation{Disjunction})::Bool = satisfies
 satisfies(v::Interpretation, α::BinaryOperation{Implication})::Bool = satisfies(v, operand1(α)) <= satisfies(v, operand2(α))
 satisfies(v::Interpretation, α::BinaryOperation{Biconditional})::Bool = satisfies(v, operand1(α)) == satisfies(v, operand2(α))
 export satisfies
+⊢ = satisfies
+export ⊢
 
 "Check if a propositional formula is satisfiable."
 satisfiable(α::Formula)::Bool = SatSolver.satisfiable(α)
 export satisfiable
 
 "Get the models of a propositional formula."
-models(α)::Set{Interpretation} = SatSolver.models(α)
+models(α::Formula)::Set{Interpretation} = SatSolver.models(α)
 export models
+
+entails(α::Formula, β::Formula) = models(α) ⊆ models(β)
+export entails
+#⊧ = entails #I wish
+#export ⊧    #upon a fish
 
 end
