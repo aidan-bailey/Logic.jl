@@ -72,6 +72,8 @@ end
 "Propositional negation unary operator type."
 struct Negation <: UnaryOperator end
 export Negation
+negation = Negation()
+export negation
 Base.show(io::IO, ::Negation) = show(io, "¬")
 Base.print(io::IO, ::Negation) = print(io, "¬")
 not(α::Union{Formula,String}) = UnaryOperation(
@@ -115,6 +117,8 @@ end
 "Propositional disjunction operator type."
 struct Disjunction <: BinaryOperator end
 export Disjunction
+disjunction = Disjunction()
+export disjunction
 Base.show(io::IO, ::Disjunction) = show(io, "∨")
 Base.print(io::IO, ::Disjunction) = print(io, "∨")
 or(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
@@ -127,6 +131,8 @@ export ∨
 "Propositional conjunction operator type."
 struct Conjunction <: BinaryOperator end
 export Conjunction
+conjunction = Conjunction()
+export conjunction
 Base.show(io::IO, ::Conjunction) = show(io, "∧")
 Base.print(io::IO, ::Conjunction) = print(io, "∧")
 and(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
@@ -139,6 +145,8 @@ export ∧
 "Propositional implication operator type."
 struct Implication <: BinaryOperator end
 export Implication
+implication = Implication()
+export implication
 Base.show(io::IO, ::Implication) = show(io, "→")
 Base.print(io::IO, ::Implication) = print(io, "→")
 implies(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
@@ -151,6 +159,8 @@ export →
 "Propositional biconditional operator type."
 struct Biconditional <: BinaryOperator end
 export Biconditional
+biconditional = Biconditional()
+export biconditional
 Base.show(io::IO, ::Biconditional) = show(io, "↔")
 Base.print(io::IO, ::Biconditional) = print(io, "↔")
 equals(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
