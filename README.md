@@ -8,7 +8,7 @@ A Julia implementation of Propositional Logic.
 
 [Propositional Logic](https://en.wikipedia.org/wiki/Propositional_calculus) is a framework for expressing, using formal notation, 
 common logic we use in every day life.
-For example, the propositional statement "birds fly" can be represented using the propositional formula 
+For example, the propositional statement "sparrows fly" can be represented using the propositional formula 
 $\textit{sparrow}\rightarrow\textit{fly}$, or in an abbreviated form, $\textit{s}\rightarrow\textit{f}$.
 In this example, $\textit{s}$ and $\textit{f}$ are known as propositional _atoms_ and the $\rightarrow$ is a propositional _implication_ (a binary
 type of propositional _connective_).
