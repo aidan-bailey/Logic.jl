@@ -25,6 +25,43 @@ The five types of propositional connectives are analogous to the operations foun
 | Material Implication | IMPLIES  | $\rightarrow$     | Binary |
 | Material Equivalence | IFF      | $\leftrightarrow$ | Binary |
 
+After creating simple propositional formulas using these connectives (i.e. $\neg\textit{\alpha}$, $\textit{\alpha}\land\textit{\beta}$, $\textit{\alpha}\lor\textit{\beta}$
+, $\textit{\alpha}\rightarrow\textit{\beta}$, $\textit{\alpha}\leftrightarrow\textit{\beta}$), we assign truth-values to our propositional atoms allowing for truth 
+tables to emerge.
+
+| $\alpha$ | $\neg\alpha$ |
+|----------|--------------|
+| $F$      | $T$          |
+| $T$      | $F$          |
+
+| $\alpha$ | $\beta$ | $\alpha\land\beta$ |
+|----------|---------|--------------------|
+| $F$      | $F$     | $F$                |
+| $F$      | $T$     | $F$                |
+| $T$      | $F$     | $F$                |
+| $T$      | $T$     | $T$                |
+
+| $\alpha$ | $\beta$ | $\alpha\lor\beta$ |
+|----------|---------|-------------------|
+| $F$      | $F$     | $F$               |
+| $F$      | $T$     | $T$               |
+| $T$      | $F$     | $T$               |
+| $T$      | $T$     | $T$               |
+
+| $\alpha$ | $\beta$ | $\alpha\rightarrow\beta$ |
+|----------|---------|--------------------------|
+| $F$      | $F$     | $T$                      |
+| $F$      | $T$     | $T$                      |
+| $T$      | $F$     | $F$                      |
+| $T$      | $T$     | $T$                      |
+
+| $\alpha$ | $\beta$ | $\alpha\leftrightarrow\beta$ |
+|----------|---------|------------------------------|
+| $F$      | $F$     | $T$                          |
+| $F$      | $T$     | $F$                          |
+| $T$      | $F$     | $F$                          |
+| $T$      | $T$     | $T$                          |
+
 ## Motivation
 
 [Julia](https://julialang.org/) is an open-source, high-performance, dynamically typed, jit-compiled programming language developed by MIT.
