@@ -8,6 +8,6 @@ A Julia implementation of Propositional Logic (see [PropositionalLogic.md](https
 While an imperative language at its core, functional techniques are complimented by the 
 [multimethods](https://en.wikipedia.org/wiki/Multiple_dispatch) and [pattern matching](https://en.wikipedia.org/wiki/Pattern_matching).
 If Julia's inheritance is viewed as a tree, inner-nodes represent abstract types with leaves being concrete structs.
-Thus functionality is shared through composition rather than inheritance.
+Functionality is then shared through composition rather than inheritance.
 
 (WIP)
