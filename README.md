@@ -13,7 +13,7 @@ $\textit{sparrow}\rightarrow\textit{fly}$, or in an abbreviated form, $\textit{s
 In this example, $\textit{s}$ and $\textit{f}$ are known as propositional _atoms_ and the $\rightarrow$ is a propositional _implication_ (a binary
 type of propositional _connective_).
 The language of propositional logic is defined recursively through stringing propositional formulas using propositional connectives.
-For example, we can express the statement "sparrows fly and penguins do not fly" with the formula $(\textit{s}\rightarrow\textit{f})\land(\textit{p}\rightarrow\neg\textit{f}$,
+For example, we can express the statement "sparrows fly and penguins do not fly" with the formula $(\textit{s}\rightarrow\textit{f})\land(\textit{p}\rightarrow\neg\textit{f})$,
 where $\neg$ is the single unary type of propositional connective.
 Propositional connectives are analogous to the operations found in [Boolean Logic](https://en.wikipedia.org/wiki/Boolean_algebra).
 
