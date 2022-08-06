@@ -68,4 +68,4 @@ tables to emerge.
 While at its core Julia an imperative language, functional techniques are rewarded thanks to 
 [multimethods](https://en.wikipedia.org/wiki/Multiple_dispatch) and [pattern matching](https://en.wikipedia.org/wiki/Pattern_matching).
 If one thinks of Julia inheritance as a tree, inner-nodes can be abstract types while only leaves can be concrete structs.
-This design decision promotes composition as a means to sharing functionality, rather than relying heavily on inheritance.
+This design decision promotes composition as a means to sharing functionality rather than relying heavily on inheritance.
