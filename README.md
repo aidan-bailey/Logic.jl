@@ -25,8 +25,8 @@ The five types of propositional connectives are analogous to the operations foun
 | Material Implication | IMPLIES  | $\rightarrow$     | Binary |
 | Material Equivalence | IFF      | $\leftrightarrow$ | Binary |
 
-After creating simple propositional formulas using these connectives (i.e. $\neg\textit{\alpha}$, $\textit{\alpha}\land\textit{\beta}$, $\textit{\alpha}\lor\textit{\beta}$
-, $\textit{\alpha}\rightarrow\textit{\beta}$, $\textit{\alpha}\leftrightarrow\textit{\beta}$), we assign truth-values to our propositional atoms allowing for truth 
+After creating simple propositional formulas using these connectives (i.e. $\neg\alpha$, $\alpha\land\beta$, $\alpha\lor\beta$
+, $\alpha\rightarrow\beta$, $\alpha\leftrightarrow\beta$), we assign truth-values to our propositional atoms allowing for truth 
 tables to emerge.
 
 | $\alpha$ | $\neg\alpha$ |
