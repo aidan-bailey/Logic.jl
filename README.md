@@ -29,10 +29,10 @@ After creating simple propositional formulas using these connectives (i.e. $\neg
 , $\alpha\rightarrow\beta$, $\alpha\leftrightarrow\beta$), we assign truth-values to our propositional atoms allowing for truth 
 tables to emerge.
 
-| $\alpha$ | $\neg\alpha$ |
-|----------|--------------|
-| $F$      | $T$          |
-| $T$      | $F$          |
+| $\alpha$ |   | $\neg\alpha$ |
+|----------|---|--------------|
+| $F$      |   | $T$          |
+| $T$      |   | $F$          |
 
 | $\alpha$ | $\beta$ | $\alpha\land\beta$ |
 |----------|---------|--------------------|
