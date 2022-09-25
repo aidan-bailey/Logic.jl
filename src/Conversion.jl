@@ -53,7 +53,6 @@ export distributive
 
 "Convert a propositional formula to conjunctive normal form." # This could probably be a bit more efficient
 function cnf(α::Formula)
-    form = nnf(α)
     cnfpass(α::Formula) = α
     cnfpass(c::Constant) = c
     cnfpass(α::Atom) = α
@@ -63,12 +62,68 @@ function cnf(α::Formula)
     cnfpass(::Disjunction, α::Formula, β::BinaryOperation{Conjunction}) = cnfpass((α ∨ operand1(β)) ∧ (α ∨ operand2(β)))
     cnfpass(::Disjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = cnfpass((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
     cnfpass(::Disjunction, α::Formula, β::Formula) = cnfpass(α) ∨ cnfpass(β)
-    while form != cnfpass(form)
-        form = cnfpass(form)
+    form = cnfpass(nnf(α))
+    while (local next = cnfpass(form)) != form
+        form = next
     end
     return form
 end
 export cnf
+
+function simplify(α::Formula)
+    simplify(α::Atom) = α
+    simplify(c::Constant) = c
+    simplify(α::BinaryOperation) = simplify(operator(α), operand1(α), operand2(α))
+    simplify(α::UnaryOperation) = simplify(operator(α), operand(α))
+    simplify(::Negation, ::Tautology) = ⊥
+    simplify(::Negation, ::Contradiction) = ⊤
+    simplify(unop::UnaryOperator, α::Formula) = UnaryOperation(unop, simplify(α))
+    simplify(binop::BinaryOperator, α::Formula, β::Formula) = BinaryOperation(binop, α, β)
+
+    simplify(::Conjunction, ::Tautology, α::Formula) = simplify(α)
+    simplify(::Conjunction, ::Contradiction, α::Formula) = ⊥
+    simplify(::Conjunction, α::Formula, ::Tautology) = simplify(α)
+    simplify(::Conjunction, α::Formula, ::Contradiction) = ⊥
+    simplify(::Conjunction, ::Tautology, ::Tautology) = ⊤
+    simplify(::Conjunction, ::Tautology, ::Contradiction) = ⊥
+    simplify(::Conjunction, ::Contradiction, ::Contradiction) = ⊥
+    simplify(::Conjunction, ::Contradiction, ::Tautology) = ⊥
+
+    simplify(::Disjunction, ::Tautology, α::Formula) = ⊤
+    simplify(::Disjunction, ::Contradiction, α::Formula) = simplify(α)
+    simplify(::Disjunction, α::Formula, ::Tautology) = ⊤
+    simplify(::Disjunction, α::Formula, ::Contradiction) = simplify(α)
+    simplify(::Disjunction, ::Tautology, ::Tautology) = ⊤
+    simplify(::Disjunction, ::Tautology, ::Contradiction) = ⊤
+    simplify(::Disjunction, ::Contradiction, ::Contradiction) = ⊥
+    simplify(::Disjunction, ::Contradiction, ::Tautology) = ⊤
+
+    simplify(::Implication, ::Tautology, α::Formula) = simplify(α)
+    simplify(::Implication, α::Formula, ::Tautology) = simplify(α ∨ ¬α)
+    simplify(::Implication, ::Contradiction, α::Formula) = simplify(α ∨ ¬α)
+    simplify(::Implication, α::Formula, ::Contradiction) = simplify(¬α)
+    simplify(::Implication, ::Tautology, ::Tautology) = ⊤
+    simplify(::Implication, ::Tautology, ::Contradiction) = ⊥
+    simplify(::Implication, ::Contradiction, ::Contradiction) = ⊤
+    simplify(::Implication, ::Contradiction, ::Tautology) = ⊤
+
+    simplify(::Biconditional, ::Tautology, α::Formula) = simplify(α)
+    simplify(::Biconditional, α::Formula, ::Tautology) = simplify(α)
+    simplify(::Biconditional, ::Contradiction, α::Formula) = simplify(¬α)
+    simplify(::Biconditional, α::Formula, ::Contradiction) = simplify(¬α)
+    simplify(::Biconditional, ::Tautology, ::Tautology) = ⊤
+    simplify(::Biconditional, ::Tautology, ::Contradiction) = ⊥
+    simplify(::Biconditional, ::Contradiction, ::Contradiction) = ⊤
+    simplify(::Biconditional, ::Contradiction, ::Tautology) = ⊥
+
+    form = simplify(α)
+    while (local next = simplify(form)) != form
+        form = next
+    end
+    return form
+end
+export simplify
+
 
 "Acquire the disjunctive clauses from a propositional formula in cnf." # This method is not accurate TODO
 disjunctiveclauses(::Disjunction, α::BinaryOperation{Disjunction}, β::BinaryOperation{Disjunction}) = [vcat(
