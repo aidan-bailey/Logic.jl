@@ -53,7 +53,7 @@ abstract type UnaryOperator <: Operator end
 export UnaryOperator
 
 "Propositional unary operation type."
-struct UnaryOperation{T <: UnaryOperator} <: Operation
+struct UnaryOperation{T<:UnaryOperator} <: Operation
     operator::T
     operand::Formula
 end
@@ -89,7 +89,7 @@ abstract type BinaryOperator <: Operator end
 export BinaryOperator
 
 "Propositional binary operation type."
-struct BinaryOperation{T <: BinaryOperator} <: Operation
+struct BinaryOperation{T<:BinaryOperator} <: Operation
     operator::T
     operand1::Formula
     operand2::Formula
@@ -171,7 +171,7 @@ export equals
 export ↔
 
 "Propositional interpretation type."
-const Interpretation = Dict{Atom, Bool}
+const Interpretation = Dict{Atom,Bool}
 export Interpretation
 
 end
