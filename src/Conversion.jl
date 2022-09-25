@@ -18,7 +18,7 @@ nnf(α::BinaryOperation{Biconditional}) = nnf(operand1(α) ∨ ¬operand2(α)) �
 nnf(α::BinaryOperation{Implication}) = nnf(¬operand1(α) ∨ operand2(α))
 export nnf
 
-"Apply the distributive law propogation through a propositional formula." # Efficient
+"Apply the distributive law propogation through a propositional formula." # Broken
 distributive(α::Formula) = error("Distributive does not yet support $(typeof(α)).")
 distributive(c::Constant) = c
 distributive(α::Atom) = α
@@ -54,37 +54,40 @@ export distributive
 "Convert a propositional formula to conjunctive normal form." # This could probably be a bit more efficient
 function cnf(α::Formula)
     form = nnf(α)
-    while form != distributive(form)
-        form = distributive(form)
+    cnfpass(α::Formula) = α
+    cnfpass(c::Constant) = c
+    cnfpass(α::Atom) = α
+    cnfpass(α::BinaryOperation) = cnfpass(operator(α), operand1(α), operand2(α))
+    cnfpass(::Conjunction, α::Formula, β::Formula) = cnfpass(α) ∧ cnfpass(β)
+    cnfpass(::Disjunction, α::BinaryOperation{Conjunction}, β::Formula) = cnfpass((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
+    cnfpass(::Disjunction, α::Formula, β::BinaryOperation{Conjunction}) = cnfpass((α ∨ operand1(β)) ∧ (α ∨ operand2(β)))
+    cnfpass(::Disjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = cnfpass((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
+    cnfpass(::Disjunction, α::Formula, β::Formula) = cnfpass(α) ∨ cnfpass(β)
+    while form != cnfpass(form)
+        form = cnfpass(form)
     end
     return form
 end
 export cnf
 
 "Acquire the disjunctive clauses from a propositional formula in cnf." # This method is not accurate TODO
-function disjunctiveclauses(α::Formula)
-
-    disjunctiveclauses(::Disjunction, α::BinaryOperation{Disjunction}, β::BinaryOperation{Disjunction}) = [vcat(
+disjunctiveclauses(::Disjunction, α::BinaryOperation{Disjunction}, β::BinaryOperation{Disjunction}) = [vcat(
         vcat(disjunctiveclauses(operand1(α)), disjunctiveclauses(operand2(α))),
         vcat(disjunctiveclauses(operand1(β)), disjunctiveclauses(operand2(β)))
     )]
-    disjunctiveclauses(::Disjunction, α::Formula, β::BinaryOperation{Disjunction}) = [vcat(vcat(disjunctiveclauses(operand1(β)), disjunctiveclauses(operand2(β))), disjunctiveclauses(α))]
-    disjunctiveclauses(::Disjunction, α::BinaryOperation{Disjunction}, β::Formula) = [vcat(vcat(disjunctiveclauses(operand1(α)), disjunctiveclauses(operand2(α))), disjunctiveclauses(β))]
-    disjunctiveclauses(::Disjunction, α::Formula, β::Formula) = [vcat(disjunctiveclauses(α), disjunctiveclauses(β))]
+disjunctiveclauses(::Disjunction, α::Formula, β::BinaryOperation{Disjunction}) = [vcat(vcat(disjunctiveclauses(operand1(β)), disjunctiveclauses(operand2(β))), disjunctiveclauses(α))]
+disjunctiveclauses(::Disjunction, α::BinaryOperation{Disjunction}, β::Formula) = [vcat(vcat(disjunctiveclauses(operand1(α)), disjunctiveclauses(operand2(α))), disjunctiveclauses(β))]
+disjunctiveclauses(::Disjunction, α::Formula, β::Formula) = [vcat(disjunctiveclauses(α), disjunctiveclauses(β))]
 
-    disjunctiveclauses(::Conjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = [disjunctiveclauses(α)..., disjunctiveclauses(β)...]
-    disjunctiveclauses(::Conjunction, α::Formula, β::BinaryOperation{Conjunction}) = [disjunctiveclauses(α), disjunctiveclauses(β)...]
-    disjunctiveclauses(::Conjunction, α::BinaryOperation{Conjunction}, β::Formula) = [disjunctiveclauses(α)..., disjunctiveclauses(β)]
-    disjunctiveclauses(::Conjunction, α::Formula, β::Formula) = [disjunctiveclauses(α), disjunctiveclauses(β)]
+disjunctiveclauses(::Conjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = [disjunctiveclauses(α)..., disjunctiveclauses(β)...]
+disjunctiveclauses(::Conjunction, α::Formula, β::BinaryOperation{Conjunction}) = [disjunctiveclauses(α), disjunctiveclauses(β)...]
+disjunctiveclauses(::Conjunction, α::BinaryOperation{Conjunction}, β::Formula) = [disjunctiveclauses(α)..., disjunctiveclauses(β)]
+disjunctiveclauses(::Conjunction, α::Formula, β::Formula) = [disjunctiveclauses(α), disjunctiveclauses(β)]
 
-    disjunctiveclauses(α::BinaryOperation) = disjunctiveclauses(operator(α), operand1(α), operand2(α))
-    disjunctiveclauses(α::UnaryOperation) = [α]
-    disjunctiveclauses(α::Atom) = [α]
-    disjunctiveclauses(c::Constant) = [c]
-
-    return disjunctiveclauses(α)
-
-end
+disjunctiveclauses(α::BinaryOperation) = disjunctiveclauses(operator(α), operand1(α), operand2(α))
+disjunctiveclauses(α::UnaryOperation) = [α]
+disjunctiveclauses(α::Atom) = [α]
+disjunctiveclauses(c::Constant) = [c]
 export disjunctiveclauses
 
 "Convert a propositional formula in cnf into pico cnf format." # This method is sound and complete but could be more efficient
