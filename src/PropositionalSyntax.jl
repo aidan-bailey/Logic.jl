@@ -100,18 +100,18 @@ export operand1
 operand2(operation::BinaryOperation) = operation.operand2
 export operand2
 function Base.show(io::IO, z::BinaryOperation)
-    show("(")
+    show(io, "(")
     show(io, operand1(z))
     show(io, operator(z))
     show(io, operand2(z))
-    show(")")
+    show(io, ")")
 end
 function Base.print(io::IO, z::BinaryOperation)
-    print("(")
+    print(io, "(")
     print(io, operand1(z))
     print(io, operator(z))
     print(io, operand2(z))
-    print(")")
+    print(io, ")")
 end
 
 "Propositional disjunction operator type."
