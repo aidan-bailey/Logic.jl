@@ -48,7 +48,7 @@ using Test
 
     @testset "Conjunctive Normal Form" begin
         @test cnf(("α" → "β") → "γ") == ("α" ∨ "γ") ∧ ((¬"β") ∨ "γ")
-        @test string(cnf("α" → ("β" → "γ"))) == string((¬"α") ∨ ((¬"β") ∨ "γ"))
+        @test (cnf("α" → ("β" → "γ"))) == ((¬"α") ∨ ((¬"β") ∨ "γ"))
     end
 
 end
