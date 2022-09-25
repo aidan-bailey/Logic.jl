@@ -1,7 +1,7 @@
 module PropositionalSemantics
 
 using ..PropositionalSyntax
-import ..SatSolver
+import ..SatSolving
 
 "Get atoms contained in a propositional formula." # Efficient
 atoms(α::Formula)::Set{Atom} = error("Atoms does not yet support $(typeof(α)).")
@@ -28,11 +28,11 @@ export satisfies
 export ⊢
 
 "Check if a propositional formula is satisfiable." # Efficient
-issatisfiable(α::Formula)::Bool = SatSolver.satisfiable(α)
+issatisfiable(α::Formula)::Bool = SatSolving.satisfiable(α)
 export issatisfiable
 
 "Get the models of a propositional formula." # Efficient
-models(α::Formula)::Set{Interpretation} = SatSolver.models(α)
+models(α::Formula)::Set{Interpretation} = SatSolving.models(α)
 export models
 
 "Check if propositional formula α is a tautology." # Efficient

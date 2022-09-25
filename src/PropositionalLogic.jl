@@ -4,7 +4,7 @@ import PicoSAT
 
 include("PropositionalSyntax.jl")
 include("Conversion.jl")
-include("SatSolver.jl")
+include("SatSolving.jl")
 include("PropositionalSemantics.jl")
 
 using .PropositionalSyntax

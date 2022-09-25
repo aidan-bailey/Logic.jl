@@ -1,4 +1,4 @@
-module SatSolver
+module SatSolving
 
 import PicoSAT
 using ..PropositionalSyntax
