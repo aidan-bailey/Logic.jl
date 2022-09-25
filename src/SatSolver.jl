@@ -30,7 +30,7 @@ distributive(::Disjunction, α::Formula, β::Formula) = distributive(α) ∨ dis
 
 "Convert a propositional formula to conjunctive normal form." # This could probably be a bit more efficient
 function cnf(α::Formula)
-    form=nnf(α)
+    form = nnf(α)
     while form != distributive(form)
         form = distributive(form)
     end
@@ -66,18 +66,18 @@ end
 function picocnf(α::Formula)
     dclauses = disjunctiveclauses(α)
     picoclauses = []
-    namedict = Dict{String, Int}()
+    namedict = Dict{String,Int}()
     idcounter = 1
     for clause in dclauses
         picoclause = []
         for literal in clause
-            atomname, sign = literal isa UnaryOperation{Negation} ? (name(operand(literal)), -1)  : (name(literal), 1)
+            atomname, sign = literal isa UnaryOperation{Negation} ? (name(operand(literal)), -1) : (name(literal), 1)
             id = get(namedict, atomname, idcounter)
             if idcounter == id
                 idcounter += 1
                 push!(namedict, atomname => id)
             end
-            push!(picoclause, sign*id)
+            push!(picoclause, sign * id)
         end
         push!(picoclauses, picoclause)
     end
@@ -105,7 +105,7 @@ function models(α::Formula)::Set{Interpretation} # This is fine
         for literal in picomodel
             piconame = abs(literal)
             atom = Atom(get(rossettadict, piconame, nothing))
-            truthvalue = literal/piconame > 0
+            truthvalue = literal / piconame > 0
             push!(valuation, atom => truthvalue)
         end
         push!(result, valuation)
