@@ -3,16 +3,18 @@ module Conversion
 using ..PropositionalSyntax
 
 "Convert a propositional formula into negation normal form." # Efficient
-nnf(α::Formula) = α
+nnf(α::Formula) = error("NNF does not yet support $(typeof(α)).")
+nnf(α::Atom) = α
 nnf(α::UnaryOperation) = nnf(operator(α), operand(α))
 nnf(u::UnaryOperator, α::Formula) = UnaryOperation(u, nnf(α))
+nnf(::Negation, α::Atom) = ¬α
 nnf(::Negation, α::UnaryOperation{Negation}) = nnf(operand(α))
 nnf(::Negation, α::BinaryOperation{Implication}) = nnf(operand1(α) ∧ ¬operand2(α))
 nnf(::Negation, α::BinaryOperation{Disjunction}) = nnf(¬operand1(α) ∧ ¬operand2(α))
 nnf(::Negation, α::BinaryOperation{Conjunction}) = nnf(¬operand1(α) ∨ ¬operand2(α))
-nnf(::Negation, α::BinaryOperation{Biconditional}) = nnf((operand1(α) ∧ ¬operand2(α)) ∨ (¬operand1(α) ∧ operand2(α)))
+nnf(::Negation, α::BinaryOperation{Biconditional}) = nnf(operand1(α) ∨ operand2(α)) ∧ nnf(¬operand1(α) ∨ ¬operand2(α))
 nnf(α::BinaryOperation) = BinaryOperation(operator(α), nnf(operand1(α)), nnf(operand2(α)))
-nnf(α::BinaryOperation{Biconditional}) = nnf((operand1(α) ∧ operand2(α)) ∨ (¬operand1(α) ∧ ¬operand2(α)))
+nnf(α::BinaryOperation{Biconditional}) = nnf(operand1(α) ∨ ¬operand2(α)) ∧ nnf(¬operand1(α) ∨ operand2(α))
 nnf(α::BinaryOperation{Implication}) = nnf(¬operand1(α) ∨ operand2(α))
 export nnf
 
