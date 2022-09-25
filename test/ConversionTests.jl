@@ -25,6 +25,27 @@ using Test
         @test nnf(¬("α" ↔ "β")) == ("α" ∨ "β") ∧ ((¬"α") ∨ (¬"β"))
     end
 
+    @testset "Distributive" begin
+
+        @test distributive(Atom("α")) == Atom("α")
+        @test distributive("α" ∧ "β") == ("α" ∧ "β")
+        @test distributive("α" ∨ "β") == ("α" ∨ "β")
+        @test distributive("α" → "β") == ("α" → "β")
+        @test distributive("α" ↔ "β") == ("α" ↔ "β")
+
+        @test distributive("α" ∧ ("β" ∨ "γ")) == (("α" ∧ "β") ∨ ("α" ∧ "γ"))
+        @test distributive("α" ∨ ("β" ∧ "γ")) == (("α" ∨ "β") ∧ ("α" ∨ "γ"))
+        @test distributive("α" ∧ ("β" ∧ "γ")) == (("α" ∧ "β") ∧ ("α" ∧ "γ"))
+        @test distributive("α" ∨ ("β" ∨ "γ")) == (("α" ∨ "β") ∨ ("α" ∨ "γ"))
+        @test distributive("α" → ("β" → "γ")) == (("α" → "β") → ("α" → "γ"))
+        @test distributive("α" → ("β" ↔ "γ")) == (("α" → "β") ↔ ("α" → "γ"))
+        @test distributive("α" → ("β" ∧ "γ")) == (("α" → "β") ∧ ("α" → "γ"))
+        @test distributive("α" → ("β" ↔ "γ")) == (("α" → "β") ↔ ("α" → "γ"))
+
+        @test distributive(("α" ∧ "β") ∨ ("γ" ∧ "δ")) == ((("α" ∨ "γ") ∧ ("α" ∨ "δ")) ∧ (("β" ∨ "γ") ∧ ("β" ∨ "δ")))
+
+    end
+
 end
 
 end
