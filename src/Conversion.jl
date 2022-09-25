@@ -25,10 +25,30 @@ distributive(α::Atom) = α
 distributive(α::UnaryOperation) = UnaryOperation(operator(α), distributive(operand(α)))
 distributive(α::BinaryOperation) = distributive(operator(α), operand1(α), operand2(α))
 distributive(binop::BinaryOperator, α::Formula, β::Formula) = BinaryOperation(binop, distributive(α), distributive(β))
-distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::Formula) = distributive((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
-distributive(::Disjunction, α::Formula, β::BinaryOperation{Conjunction}) = distributive((α ∨ operand1(β)) ∧ (α ∨ operand2(β)))
-distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = distributive((operand1(α) ∨ β) ∧ (operand2(α) ∨ β))
-distributive(::Disjunction, α::Formula, β::Formula) = distributive(α) ∨ distributive(β)
+# Conjunction over disjunction
+distributive(::Conjunction, α::Formula, β::BinaryOperation{Disjunction}) = distributive(α ∧ operand1(β)) ∨ distributive(α ∧ operand2(β))
+distributive(::Conjunction, α::BinaryOperation{Disjunction}, β::Formula) = distributive(operand1(α) ∧ β) ∨ distributive(operand2(α) ∧ β)
+# Disjunction over conjunction
+distributive(::Disjunction, α::Formula, β::BinaryOperation{Conjunction}) = distributive(α ∨ operand1(β)) ∧ distributive(α ∨ operand2(β))
+distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::Formula) = distributive(operand1(α) ∨ β) ∧ distributive(operand2(α) ∨ β)
+# Conjunction over conjunction
+distributive(::Conjunction, α::Formula, β::BinaryOperation{Conjunction}) = distributive(α ∧ operand1(β)) ∧ distributive(α ∧ operand2(β))
+distributive(::Conjunction, α::BinaryOperation{Conjunction}, β::Formula) = distributive(operand1(α) ∧ β) ∧ distributive(operand2(α) ∧ β)
+# Disjunction over disjunction
+distributive(::Disjunction, α::Formula, β::BinaryOperation{Disjunction}) = distributive(α ∨ operand1(β)) ∨ distributive(α ∨ operand2(β))
+distributive(::Disjunction, α::BinaryOperation{Disjunction}, β::Formula) = distributive(operand1(α) ∨ β) ∨ distributive(operand2(α) ∨ β)
+# Implication over implication
+distributive(::Implication, α::Formula, β::BinaryOperation{Implication}) = distributive(α → operand1(β)) → distributive(α → operand2(β))
+# Implication over equivalence
+distributive(::Implication, α::Formula, β::BinaryOperation{Biconditional}) = distributive(α → operand1(β)) ↔ distributive(α → operand2(β))
+# Implication over conjunction
+distributive(::Implication, α::Formula, β::BinaryOperation{Conjunction}) = distributive(α → operand1(β)) ∧ distributive(α → operand2(β))
+# Disjunction over equivalence
+distributive(::Disjunction, α::Formula, β::BinaryOperation{Biconditional}) = distributive(α ∨ operand1(β)) ↔ distributive(α ∨ operand2(β))
+distributive(::Disjunction, α::BinaryOperation{Biconditional}, β::Formula) = distributive(operand1(α) ∨ β) ↔ distributive(operand2(α) ∨ β)
+# Double Distribution
+distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = (distributive(operand1(α) ∨ operand1(β)) ∧ distributive(operand1(α) ∨ operand2(β))) ∧ (distributive(operand2(α) ∨ operand1(β)) ∧ distributive(operand2(α) ∨ operand2(β)))
+distributive(::Conjunction, α::BinaryOperation{Disjunction}, β::BinaryOperation{Disjunction}) = (distributive(operand1(α) ∧ operand1(β)) ∨ distributive(operand1(α) ∧ operand2(β))) ∨ (distributive(operand2(α) ∧ operand1(β)) ∨ distributive(operand2(α) ∧ operand2(β)))
 export distributive
 
 "Convert a propositional formula to conjunctive normal form." # This could probably be a bit more efficient
