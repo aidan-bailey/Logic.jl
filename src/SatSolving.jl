@@ -50,6 +50,7 @@ function satisfiable(α::Formula)
     picoclauses, _ = picocnf(α)
     return PicoSAT.solve(picoclauses) != :unsatisfiable
 end
+export satisfiable
 
 "Get the models of a propositional formula."
 function models(α::Formula)::Set{Interpretation} # This is fine
@@ -72,5 +73,6 @@ function models(α::Formula)::Set{Interpretation} # This is fine
     end
     return Set(result)
 end
+export models
 
 end
