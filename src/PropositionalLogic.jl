@@ -311,7 +311,7 @@ export simplify
 
 disjunctiveclauses(::Union{BinaryOperation{Implication}, BinaryOperation{Biconditional}}) = error("Disjunctive class called for non-cnf formula")
 disjunctiveclauses(α::BinaryOperation{Conjunction}) = [disjunctiveclauses(operand1(α))..., disjunctiveclauses(operand2(α))...]
-disjunctiveclauses(α::BinaryOperation{Disjunction}) = [atoms(α)]
+disjunctiveclauses(α::BinaryOperation{Disjunction}) = [union(disjunctiveclauses(operand1(α))..., disjunctiveclauses(operand2(α))...)]
 disjunctiveclauses(α::UnaryOperation) = [Set([α])]
 disjunctiveclauses(α::Atom) = [Set([α])]
 disjunctiveclauses(c::Constant) = [Set([c])]
@@ -404,7 +404,7 @@ function models(α::Formula)::Set{Interpretation} # This is fine
         return world(α)
     end
 
-    picoclauses, namedict = picocnf(α)
+    picoclauses, namedict = picocnf(form)
     rossettadict = Dict(value => key for (key, value) in namedict)
     picomodels = PicoSAT.itersolve(picoclauses)
     if isnothing(picomodels)
