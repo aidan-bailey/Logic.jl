@@ -1,8 +1,7 @@
 module PropositionalSyntaxTests
 
 include("../src/PropositionalLogic.jl")
-using .PropositionalLogic.PropositionalSyntax
-using .PropositionalLogic.PropositionalSemantics
+using .PropositionalLogic
 
 using Test
 

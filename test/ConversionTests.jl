@@ -1,8 +1,7 @@
 module ConversionTests
 
 include("../src/PropositionalLogic.jl")
-using .PropositionalLogic.PropositionalSyntax
-using .PropositionalLogic.Conversion
+using .PropositionalLogic
 
 using Test
 
@@ -99,6 +98,23 @@ using Test
                 @test simplify((⊤ ↔ ⊥)) == ⊥
                 @test simplify((⊥ ↔ ⊥)) == ⊤
                 @test simplify((⊥ ↔ ⊤)) == ⊥
+        end
+
+
+
+        @testset "Disjunctive Clauses" begin
+
+            @test disjunctiveclauses(Atom("a")) == [Set([Atom("a")])]
+
+            @test disjunctiveclauses(¬"a") == [Set([¬"a"])]
+
+            @test disjunctiveclauses("a" ∨ "b") == [Set([Atom("a"),  Atom("b")])]
+            @test disjunctiveclauses("a" ∨ "b" ∨ "c") == [Set([Atom("a"),  Atom("b"),  Atom("c")])]
+
+            @test disjunctiveclauses("a" ∧ "b") == [Set([Atom("a")]),  Set([Atom("b")])]
+            @test disjunctiveclauses("a" ∧ "b" ∧ "c") == [Set([Atom("a")]),  Set([Atom("b")]),  Set([Atom("c")])]
+            @test disjunctiveclauses("a" ∧ ("b" ∨ "c")) == [Set([Atom("a")]), Set([Atom("b"),  Atom("c")])]
+
         end
 
 end
