@@ -13,9 +13,39 @@ using Test
         @test models(¬"a") == Set([I(Atom("a") => false)])
 
         @test models("a" ∨ "b") == Set([
-            I(Atom("a") => true, Atom("b") => false),
+             I(Atom("a") => true, Atom("b") => false),
+             I(Atom("a") => false, Atom("b") => true),
+             I(Atom("a") => true, Atom("b") => true),
+         ])
+
+        @test models(¬("a" ∨ "b")) == Set([
+             I(Atom("a") => false, Atom("b") => false),
+         ])
+
+        @test models(¬("a" ∧ "b")) == Set([
+             I(Atom("a") => true, Atom("b") => false),
+             I(Atom("a") => false, Atom("b") => true),
+             I(Atom("a") => false, Atom("b") => false),
+         ])
+
+        @test models("a" → "b") == Set([
+            I(Atom("a") => false, Atom("b") => false),
             I(Atom("a") => false, Atom("b") => true),
             I(Atom("a") => true, Atom("b") => true),
+        ])
+
+        @test models(¬("a" → "b")) == Set([
+            I(Atom("a") => true, Atom("b") => false),
+        ])
+
+        @test models("a" ↔ "b") == Set([
+            I(Atom("a") => false, Atom("b") => false),
+            I(Atom("a") => true, Atom("b") => true),
+        ])
+
+        @test models(¬("a" ↔ "b")) == Set([
+            I(Atom("a") => false, Atom("b") => true),
+            I(Atom("a") => true, Atom("b") => false),
         ])
 
     end
