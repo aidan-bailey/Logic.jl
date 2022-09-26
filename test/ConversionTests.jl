@@ -115,6 +115,8 @@ using Test
             @test disjunctiveclauses("a" ∧ "b" ∧ "c") == [Set([Atom("a")]),  Set([Atom("b")]),  Set([Atom("c")])]
             @test disjunctiveclauses("a" ∧ ("b" ∨ "c")) == [Set([Atom("a")]), Set([Atom("b"),  Atom("c")])]
 
+            @test disjunctiveclauses(¬"a" ∨ "b") == [Set([¬"a",  Atom("b")])]
+
         end
 
 end
