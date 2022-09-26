@@ -47,7 +47,13 @@ end
 
 "Check if a propositional formula is satisfiable." # Efficient
 function satisfiable(α::Formula)
-    picoclauses, _ = picocnf(α)
+    form = simplify(cnf(α))
+    if form <: Contradiction
+        return false
+    elseif form <: Tautology
+        return true
+    end
+    picoclauses, _ = picocnf(form)
     return PicoSAT.solve(picoclauses) != :unsatisfiable
 end
 export satisfiable
