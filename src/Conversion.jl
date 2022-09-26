@@ -164,5 +164,6 @@ function picocnf(α::Formula)
     end
     return picoclauses, namedict
 end
+export picocnf
 
 end
