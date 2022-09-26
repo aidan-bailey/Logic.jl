@@ -180,6 +180,8 @@ export ↔
 "Propositional interpretation type."
 const Interpretation = Dict{Atom,Bool}
 export Interpretation
+I = Interpretation
+export I
 
 ###############
 # CONVERSIONS #
@@ -408,9 +410,9 @@ function models(α::Formula)::Set{Interpretation} # This is fine
     if isnothing(picomodels)
         return []
     end
-    result = []
+    result::Vector{Interpretation} = []
     for picomodel in picomodels
-        valuation = Interpretation()
+        valuation:: Interpretation = Interpretation()
         for literal in picomodel
             piconame = abs(literal)
             atom = Atom(get(rossettadict, piconame, nothing))
@@ -419,7 +421,7 @@ function models(α::Formula)::Set{Interpretation} # This is fine
         end
         push!(result, valuation)
     end
-    return Set(result)
+    return Set{Interpretation}(result)
 end
 export models
 
