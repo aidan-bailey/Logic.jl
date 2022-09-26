@@ -32,7 +32,7 @@ export ⊢
 world(α::Formula) = world(atoms(α))
 function world(atoms::Set{Atom})
     atomslist = collect(atoms)
-    interpretations:: Vector{Interpretation} = [Interpretation(atom => false for atom in atomslist)]
+    interpretations::Vector{Interpretation} = [Interpretation(atom => false for atom in atomslist)]
     for truths in combinations(atomslist)
         falses = setdiff(atoms, truths)
         interpretation = Interpretation(union([atom => false for atom in falses], [atom => true for atom in truths]))
