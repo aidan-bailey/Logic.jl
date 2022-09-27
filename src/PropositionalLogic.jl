@@ -184,10 +184,7 @@ export ↔
 const Interpretation = Set{Atom}
 export Interpretation
 I(atoms::Union{String, Char, Int, Atom}...) = Interpretation(map(a -> a isa Atom ? a : Atom(a), atoms))
-#I() = Interpretation([])
 export I
-
-union(Set())
 
 ###############
 # CONVERSIONS #
