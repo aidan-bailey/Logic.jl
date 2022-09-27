@@ -309,7 +309,7 @@ function simplify(α::Formula)
 end
 export simplify
 
-disjunctiveclauses(::Union{BinaryOperation{Implication}, BinaryOperation{Biconditional}}) = error("Disjunctive class called for non-cnf formula")
+disjunctiveclauses(::Union{BinaryOperation{Implication},BinaryOperation{Biconditional}}) = error("Disjunctive class called for non-cnf formula")
 disjunctiveclauses(α::BinaryOperation{Conjunction}) = [disjunctiveclauses(operand1(α))..., disjunctiveclauses(operand2(α))...]
 disjunctiveclauses(α::BinaryOperation{Disjunction}) = [union(disjunctiveclauses(operand1(α))..., disjunctiveclauses(operand2(α))...)]
 disjunctiveclauses(α::UnaryOperation) = [Set([α])]
@@ -412,7 +412,7 @@ function models(α::Formula)::Set{Interpretation} # This is fine
     end
     result::Vector{Interpretation} = []
     for picomodel in picomodels
-        valuation:: Interpretation = Interpretation()
+        valuation::Interpretation = Interpretation()
         for literal in picomodel
             piconame = abs(literal)
             atom = Atom(get(rossettadict, piconame, nothing))
