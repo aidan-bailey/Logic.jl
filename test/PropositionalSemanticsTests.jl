@@ -53,10 +53,12 @@ using Test
     @testset "Entailment" begin
 
         @test entails("a", "a")
-
         @test entails(¬"a", ¬"a")
-
         @test entails("a" ∧ "b", "a")
+        @test entails("a" ∧ "b", "a" ∧ "b")
+        @test entails("a" → "b", "a")
+        @test entails("a" ↔ "b", "a" ∧ "b")
+        @test entails("a" ∧ "b", "a" ↔ "b")
 
     end
 
