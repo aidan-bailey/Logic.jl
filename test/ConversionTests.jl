@@ -104,18 +104,18 @@ using Test
 
         @testset "Disjunctive Clauses" begin
 
-            @test disjunctiveclauses(Atom("a")) == [Set([Atom("a")])]
+            @test disjunctiveclauses("a") == Set([clause("a")])
 
-            @test disjunctiveclauses(¬"a") == [Set([¬"a"])]
+            @test disjunctiveclauses(¬"a") == Set([clause(¬"a")])
 
-            @test disjunctiveclauses("a" ∨ "b") == [Set([Atom("a"),  Atom("b")])]
-            @test disjunctiveclauses("a" ∨ "b" ∨ "c") == [Set([Atom("a"),  Atom("b"),  Atom("c")])]
+            @test disjunctiveclauses("a" ∨ "b") == Set([clause("a",  "b")])
+            @test disjunctiveclauses("a" ∨ "b" ∨ "c") == Set([clause("a",  "b",  "c")])
 
-            @test disjunctiveclauses("a" ∧ "b") == [Set([Atom("a")]),  Set([Atom("b")])]
-            @test disjunctiveclauses("a" ∧ "b" ∧ "c") == [Set([Atom("a")]),  Set([Atom("b")]),  Set([Atom("c")])]
-            @test disjunctiveclauses("a" ∧ ("b" ∨ "c")) == [Set([Atom("a")]), Set([Atom("b"),  Atom("c")])]
+            @test disjunctiveclauses("a" ∧ "b") == Set([clause("a"),  clause("b")])
+            @test disjunctiveclauses("a" ∧ "b" ∧ "c") == Set([clause("a"),  clause("b"),  clause("c")])
+            @test disjunctiveclauses("a" ∧ ("b" ∨ "c")) == Set([clause("a"), clause("b",  "c")])
 
-            @test disjunctiveclauses(¬"a" ∨ "b") == [Set([¬"a",  Atom("b")])]
+            @test disjunctiveclauses(¬"a" ∨ "b") == Set([clause(¬"a",  "b")])
 
         end
 

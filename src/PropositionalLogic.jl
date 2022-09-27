@@ -44,6 +44,7 @@ struct Atom <: Formula
 end
 export Atom
 name(α::Atom)::Union{String, Int} = α.name
+Base.convert(::Type{Formula}, x::Union{String, Char, Int}) = Atom(x)
 export name
 Base.show(io::IO, a::Atom) = show(io, name(a))
 Base.print(io::IO, a::Atom) = print(io, name(a))
@@ -186,11 +187,19 @@ export Interpretation
 I(atoms::Union{String, Char, Int, Atom}...) = Interpretation(map(a -> a isa Atom ? a : Atom(a), atoms))
 export I
 
+const Literal = Union{Atom, UnaryOperation, Constant}
+export Literal
+const Clause = Set{Literal}
+clause(α...) = Clause(map(x -> Base.convert(Formula, x), α))
+export clause
+export Clause
+
 ###############
 # CONVERSIONS #
 ###############
 
 "Convert a propositional formula into negation normal form." # Efficient
+nnf(α) = nnf(convert(Formula, α))
 nnf(α::Formula) = error("NNF does not yet support $(typeof(α)).")
 nnf(α::Atom) = α
 nnf(α::UnaryOperation) = nnf(operator(α), operand(α))
@@ -207,6 +216,7 @@ nnf(α::BinaryOperation{Implication}) = nnf(¬operand1(α) ∨ operand2(α))
 export nnf
 
 "Apply the distributive law propogation through a propositional formula." # Broken
+distributive(α) = distributive(convert(Formula, α))
 distributive(α::Formula) = error("Distributive does not yet support $(typeof(α)).")
 distributive(c::Constant) = c
 distributive(α::Atom) = α
@@ -240,6 +250,7 @@ distributive(::Conjunction, α::BinaryOperation{Disjunction}, β::BinaryOperatio
 export distributive
 
 "Convert a propositional formula to conjunctive normal form." # This could probably be a bit more efficient
+cnf(α) = cnf(convert(Formula, α))
 function cnf(α::Formula)
     cnfpass(α::Formula) = α
     cnfpass(c::Constant) = c
@@ -258,6 +269,7 @@ function cnf(α::Formula)
 end
 export cnf
 
+simplify(α) = simplift(convert(Formula, α))
 function simplify(α::Formula)
     simplify(α::Atom) = α
     simplify(c::Constant) = c
@@ -312,17 +324,21 @@ function simplify(α::Formula)
 end
 export simplify
 
-disjunctiveclauses(::Union{BinaryOperation{Implication},BinaryOperation{Biconditional}}) = error("Disjunctive class called for non-cnf formula")
-disjunctiveclauses(α::BinaryOperation{Conjunction}) = [disjunctiveclauses(operand1(α))..., disjunctiveclauses(operand2(α))...]
-disjunctiveclauses(α::BinaryOperation{Disjunction}) = [union(disjunctiveclauses(operand1(α))..., disjunctiveclauses(operand2(α))...)]
-disjunctiveclauses(α::UnaryOperation) = [Set([α])]
-disjunctiveclauses(α::Atom) = [Set([α])]
-disjunctiveclauses(c::Constant) = [Set([c])]
+function disjunctiveclauses(α::Formula)::Set{Clause}
+    disjunctiveclauses(::Union{BinaryOperation{Implication},BinaryOperation{Biconditional}}) = error("Disjunctive class called for non-cnf formula")
+    disjunctiveclauses(α::BinaryOperation{Conjunction}) = [disjunctiveclauses(operand1(α))..., disjunctiveclauses(operand2(α))...]
+    disjunctiveclauses(α::BinaryOperation{Disjunction}) = [union(disjunctiveclauses(operand1(α))..., disjunctiveclauses(operand2(α))...)]
+    disjunctiveclauses(α::UnaryOperation) = [Clause([α])]
+    disjunctiveclauses(α::Atom) = [Clause([α])]
+    disjunctiveclauses(c::Constant) = [Clause([c])]
+    return Set(disjunctiveclauses(α))
+end
+disjunctiveclauses(α) = disjunctiveclauses(convert(Formula, α))
 export disjunctiveclauses
 
 "Convert a propositional formula in cnf into pico cnf format." # This method is sound and complete but could be more efficient
 function picocnf(α::Formula)
-    dclauses = disjunctiveclauses(α)
+    dclauses = collect(disjunctiveclauses(α))
     picoclauses = []
     namedict = Dict{String,Int}()
     idcounter = 1
@@ -341,6 +357,7 @@ function picocnf(α::Formula)
     end
     return picoclauses, namedict
 end
+picocnf(α) = picocnf(convert(Formula, α))
 export picocnf
 
 #############
@@ -348,6 +365,7 @@ export picocnf
 #############
 
 "Get atoms contained in a propositional formula." # Efficient
+atoms(α) = atoms(convert(Formula, α))
 atoms(α::Formula)::Set{Atom} = error("Atoms does not yet support $(typeof(α)).")
 atoms(::Constant)::Set{Atom} = Set()
 atoms(α::Atom)::Set{Atom} = Set([α])
@@ -356,6 +374,7 @@ atoms(α::BinaryOperation)::Set{Atom} = union(atoms(operand1(α)), atoms(operand
 export atoms
 
 "Check if an interpretation satisfies a propostional formula." # Efficient
+satisfies(v::Interpretation, α) = satisfies(v, convert(Formula, α))
 satisfies(::Interpretation, α::Formula)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
 satisfies(::Interpretation, ::Tautology)::Bool = true
 satisfies(::Interpretation, ::Contradiction)::Bool = false
@@ -371,10 +390,12 @@ export satisfies
 ⊢ = satisfies
 export ⊢
 
+world(α) = world(convert(Formula, α))
 world(α::Formula) = union(Interpretation(), Set(map(Interpretation, combinations(atoms(α)))))
 export world
 
 "Check if a propositional formula is satisfiable." # Efficient
+satisfiable(α) = satisfiable(convert(Formula, α))
 function satisfiable(α::Formula)
     form = simplify(cnf(α))
     if form isa Contradiction
@@ -388,6 +409,7 @@ end
 export satisfiable
 
 "Get the models of a propositional formula."
+models(α) = models(convert(Formula, α))
 function models(α::Formula)::Set{Interpretation} # This is fine
     form = simplify(cnf(α))
 
@@ -421,17 +443,22 @@ end
 export models
 
 "Check if propositional formula α is a tautology." # Efficient
+istautology(α) = istautology(convert(Formula, α))
 istautology(::Contradiction)::Bool = false
 istautology(::Tautology)::Bool = true
 istautology(α::Formula)::Bool = length(models(α)) == 2^length(atoms(α))
 export isvalid
 
 "Check if propositional formula α is a contradiction."
+iscontradiction(α) = iscontradiction(convert(Formula, α))
 iscontradiction(::Contradiction)::Bool = true
 iscontradiction(::Tautology)::Bool = false
 iscontradiction(α::Formula) = isempty(models(α))
 
 "Check if propositional formula α entails propositional formula β." # Efficient and elegant wow!
+entails(α, β) = entails(convert(Formula, α), convert(Formula, β))
+entails(α::Formula, β) = entails(α, convert(Formula, β))
+entails(α, β::Formula) = entails(α, convert(Formula, β))
 function entails(α::Formula, β::Formula)
     prevalentatoms = intersect(atoms(α), atoms(β))
     models1 = collect(map(m -> intersect(m, prevalentatoms), collect(models(α))))

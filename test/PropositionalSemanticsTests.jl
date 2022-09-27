@@ -9,7 +9,7 @@ using Test
 
     @testset "Models" begin
 
-        @test models(Atom("a")) == Set([I("a")])
+        @test models("a") == Set([I("a")])
         @test models(¬"a") == Set([I()])
 
         @test models("a" ∨ "b") == Set([
@@ -52,11 +52,11 @@ using Test
 
     @testset "Entailment" begin
 
-        @test entails(Atom("a"), Atom("a"))
+        @test entails("a", "a")
 
         @test entails(¬"a", ¬"a")
 
-        @test entails("a" ∧ "b", Atom("a"))
+        @test entails("a" ∧ "b", "a")
 
     end
 
