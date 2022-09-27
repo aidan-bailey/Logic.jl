@@ -1,7 +1,7 @@
 module PropositionalSyntaxTests
 
-include("../src/PropositionalLogic.jl")
-using .PropositionalLogic
+include("../src/Syntax.jl")
+using .Syntax
 
 using Test
 
