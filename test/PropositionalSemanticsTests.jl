@@ -50,6 +50,16 @@ using Test
 
     end
 
+    @testset "Entailment" begin
+
+        @test entails(Atom("a"), Atom("a"))
+
+        @test entails(¬"a", ¬"a")
+
+        @test_broken entails("a" ∧ "b", "a")
+
+    end
+
 end
 
 end
