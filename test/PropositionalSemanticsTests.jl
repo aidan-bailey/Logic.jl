@@ -9,43 +9,43 @@ using Test
 
     @testset "Models" begin
 
-        @test models(Atom("a")) == Set([I(Atom("a") => true)])
-        @test models(¬"a") == Set([I(Atom("a") => false)])
+        @test models(Atom("a")) == Set([I("a")])
+        @test models(¬"a") == Set([I()])
 
         @test models("a" ∨ "b") == Set([
-             I(Atom("a") => true, Atom("b") => false),
-             I(Atom("a") => false, Atom("b") => true),
-             I(Atom("a") => true, Atom("b") => true),
+             I("a"),
+             I("b"),
+             I("a", "b"),
          ])
 
         @test models(¬("a" ∨ "b")) == Set([
-             I(Atom("a") => false, Atom("b") => false),
-         ])
+            I(),
+        ])
 
         @test models(¬("a" ∧ "b")) == Set([
-             I(Atom("a") => true, Atom("b") => false),
-             I(Atom("a") => false, Atom("b") => true),
-             I(Atom("a") => false, Atom("b") => false),
+             I("a"),
+             I("b"),
+             I()
          ])
 
         @test models("a" → "b") == Set([
-            I(Atom("a") => false, Atom("b") => false),
-            I(Atom("a") => false, Atom("b") => true),
-            I(Atom("a") => true, Atom("b") => true),
+            I(),
+            I("b"),
+            I("a", "b"),
         ])
 
         @test models(¬("a" → "b")) == Set([
-            I(Atom("a") => true, Atom("b") => false),
+            I("a"),
         ])
 
         @test models("a" ↔ "b") == Set([
-            I(Atom("a") => false, Atom("b") => false),
-            I(Atom("a") => true, Atom("b") => true),
+            I(),
+            I("a", "b"),
         ])
 
         @test models(¬("a" ↔ "b")) == Set([
-            I(Atom("a") => false, Atom("b") => true),
-            I(Atom("a") => true, Atom("b") => false),
+            I("b"),
+            I("a"),
         ])
 
     end
@@ -56,7 +56,7 @@ using Test
 
         @test entails(¬"a", ¬"a")
 
-        @test_broken entails("a" ∧ "b", "a")
+        @test entails("a" ∧ "b", Atom("a"))
 
     end
 

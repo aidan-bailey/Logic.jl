@@ -37,10 +37,13 @@ Base.print(io::IO, ::Contradiction) = print(io, "⊥")
 
 "Propositional atom type."
 struct Atom <: Formula
-    name::String
+    name::Union{String, Int}
+    Atom(n::Int) = new(n)
+    Atom(n::String) = new(n)
+    Atom(n::Char) = new(string(n))
 end
 export Atom
-name(α::Atom)::String = α.name
+name(α::Atom)::Union{String, Int} = α.name
 export name
 Base.show(io::IO, a::Atom) = show(io, name(a))
 Base.print(io::IO, a::Atom) = print(io, name(a))
@@ -178,10 +181,13 @@ export equals
 export ↔
 
 "Propositional interpretation type."
-const Interpretation = Dict{Atom,Bool}
+const Interpretation = Set{Atom}
 export Interpretation
-I = Interpretation
+I(atoms::Union{String, Char, Int, Atom}...) = Interpretation(map(a -> a isa Atom ? a : Atom(a), atoms))
+#I() = Interpretation([])
 export I
+
+union(Set())
 
 ###############
 # CONVERSIONS #
@@ -356,7 +362,7 @@ export atoms
 satisfies(::Interpretation, α::Formula)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
 satisfies(::Interpretation, ::Tautology)::Bool = true
 satisfies(::Interpretation, ::Contradiction)::Bool = false
-satisfies(v::Interpretation, α::Atom)::Bool = v[α]
+satisfies(v::Interpretation, α::Atom)::Bool = α ∈ v
 satisfies(::Interpretation, α::UnaryOperation)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
 satisfies(v::Interpretation, α::UnaryOperation{Negation})::Bool = !satisfies(v, α)
 satisfies(::Interpretation, α::BinaryOperation)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
@@ -368,17 +374,7 @@ export satisfies
 ⊢ = satisfies
 export ⊢
 
-world(α::Formula) = world(atoms(α))
-function world(atoms::Set{Atom})
-    atomslist = collect(atoms)
-    interpretations::Vector{Interpretation} = [Interpretation(atom => false for atom in atomslist)]
-    for truths in combinations(atomslist)
-        falses = setdiff(atoms, truths)
-        interpretation = Interpretation(union([atom => false for atom in falses], [atom => true for atom in truths]))
-        push!(interpretations, interpretation)
-    end
-    return interpretations
-end
+world(α::Formula) = union(Interpretation(), Set(map(Interpretation, combinations(atoms(α)))))
 export world
 
 "Check if a propositional formula is satisfiable." # Efficient
@@ -417,7 +413,9 @@ function models(α::Formula)::Set{Interpretation} # This is fine
             piconame = abs(literal)
             atom = Atom(get(rossettadict, piconame, nothing))
             truthvalue = literal / piconame > 0
-            push!(valuation, atom => truthvalue)
+            if truthvalue
+                push!(valuation, atom)
+            end
         end
         push!(result, valuation)
     end
@@ -437,7 +435,17 @@ iscontradiction(::Tautology)::Bool = false
 iscontradiction(α::Formula) = isempty(models(α))
 
 "Check if propositional formula α entails propositional formula β." # Efficient and elegant wow!
-entails(α::Formula, β::Formula) = models(α) ⊆ models(β)
+function entails(α::Formula, β::Formula)
+    prevalentatoms = intersect(atoms(α), atoms(β))
+    models1 = collect(map(m -> intersect(m, prevalentatoms), collect(models(α))))
+    models2 = collect(models(β))
+    all(
+        map(m1 -> any(
+            map(m2 -> m1 ⊆ m2, models2)),
+            models1
+            )
+    )
+end
 entails(α::Formula, ::Tautology) = istautology(α)
 entails(α::Formula, ::Contradiction) = iscontradiction(α)
 entails(::Tautology, ::Tautology) = true            # I think?
