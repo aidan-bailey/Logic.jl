@@ -1,11 +1,11 @@
 module PropositionalSyntaxTests
 
-include("../src/Syntax.jl")
-using .Syntax
+include("../src/PropositionalLogic.jl")
+using .PropositionalLogic.Types
 
 using Test
 
-@testset "Syntax" begin
+@testset "Types" begin
 
     @testset "Constant" begin
         @test Constant <: Formula

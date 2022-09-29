@@ -1,12 +1,12 @@
 module PropositionalSemanticsTests
 
 include("../src/PropositionalLogic.jl")
-using .PropositionalLogic.Syntax
-using .PropositionalLogic.Semantics
+using .PropositionalLogic.Types
+using .PropositionalLogic.Algorithms
 
 using Test
 
-@testset "Semantics" begin
+@testset "Algorithms" begin
 
     @testset "Models" begin
 

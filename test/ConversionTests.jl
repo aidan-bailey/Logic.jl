@@ -1,12 +1,12 @@
 module ConversionTests
 
 include("../src/PropositionalLogic.jl")
-using .PropositionalLogic.Syntax
-using .PropositionalLogic.Semantics
+using .PropositionalLogic.Types
+using .PropositionalLogic.Algorithms
 
 using Test
 
-@testset "Conversion" begin
+@testset "Conversions" begin
 
         @testset "Negation Normal Form" begin
                 @test nnf(Atom("α")) == Atom("α")
