@@ -57,8 +57,8 @@ distributive(::Conjunction, α::BinaryOperation{Disjunction}, β::BinaryOperatio
 distributive(α) = distributive(convert(Formula, α))
 export distributive
 
-"Convert a propositional formula to conjunctive normal form." # This could probably be a bit more efficient
-function cnf(α::Formula)
+"Convert a propositional formula to conjunctive normal form."
+function cnf(α::Formula)::Formula
     cnfpass(α::Formula) = α
     cnfpass(c::Constant) = c
     cnfpass(α::Atom) = α
