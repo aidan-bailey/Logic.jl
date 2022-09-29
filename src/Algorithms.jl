@@ -77,7 +77,7 @@ end
 cnf(α) = cnf(convert(Formula, α))
 export cnf
 
-function simplify(α::Formula)
+function simplify(α::Formula)::Formula
     simplify(α::Atom) = α
     simplify(c::Constant) = c
     simplify(α::BinaryOperation) = simplify(operator(α), operand1(α), operand2(α))
@@ -145,13 +145,13 @@ disjunctiveclauses(α) = disjunctiveclauses(convert(Formula, α))
 export disjunctiveclauses
 
 "Convert a propositional formula in cnf into pico cnf format." # This method is sound and complete but could be more efficient
-function picocnf(α::Formula)
+function picocnf(α::Formula)::Tuple{Vector{Vector{Int}}, Dict{String, Int}}
     dclauses = collect(disjunctiveclauses(α))
-    picoclauses = []
+    picoclauses::Vector{Vector{Int}} = []
     namedict = Dict{String,Int}()
     idcounter = 1
     for clause in dclauses
-        picoclause = []
+        picoclause::Vector{Int} = []
         for literal in clause
             atomname, sign = literal isa UnaryOperation{Negation} ? (name(operand(literal)), -1) : (name(literal), 1)
             id = get(namedict, atomname, idcounter)
