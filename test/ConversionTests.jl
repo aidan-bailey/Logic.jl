@@ -9,7 +9,7 @@ using Test
 @testset "Conversions" begin
 
         @testset "Negation Normal Form" begin
-                @test nnf(Atom("α")) == Atom("α")
+                @test nnf("α") == Atom("α")
                 @test nnf(¬"α") == ¬"α"
 
                 @test nnf("α" ∧ "β") == "α" ∧ "β"
@@ -27,7 +27,7 @@ using Test
 
         @testset "Distributive" begin
 
-                @test distributive(Atom("α")) == Atom("α")
+                @test distributive("α") == Atom("α")
                 @test distributive("α" ∧ "β") == ("α" ∧ "β")
                 @test distributive("α" ∨ "β") == ("α" ∨ "β")
                 @test distributive("α" → "β") == ("α" → "β")
@@ -47,58 +47,59 @@ using Test
         end
 
         @testset "Conjunctive Normal Form" begin
-                @test cnf(("α" → "β") → "γ") == ("α" ∨ "γ") ∧ ((¬"β") ∨ "γ")
-                @test (cnf("α" → ("β" → "γ"))) == ((¬"α") ∨ ((¬"β") ∨ "γ"))
+                @test cnf(("α" → "β") → "γ") == ("α" ∨ "γ") ∧ (¬"β" ∨ "γ")
+                @test (cnf("α" → ("β" → "γ"))) == (¬"α" ∨ (¬"β" ∨ "γ"))
         end
 
 
         @testset "Simplify" begin
-                @test simplify(Atom("α")) == Atom("α")
-                @test simplify((¬"α")) == (¬"α")
-                @test simplify((¬⊤)) == ⊥
-                @test simplify((¬⊥)) == ⊤
-                @test simplify(("α" ∧ "β")) == ("α" ∧ "β")
-                @test simplify(¬("α" ∧ "β")) == (¬("α" ∧ "β"))
 
-                @test simplify(("α" ∧ ⊤)) == Atom("α")
-                @test simplify((⊤ ∧ "α")) == Atom("α")
-                @test simplify(("α" ∧ ⊥)) == ⊥
-                @test simplify((⊥ ∧ "α")) == ⊥
+                @test simplify("α") == Atom("α")
+                @test simplify(¬"α") == (¬"α")
+                @test simplify(¬⊤) == ⊥
+                @test simplify(¬⊥) == ⊤
+                @test simplify("α" ∧ "β") == ("α" ∧ "β")
+                @test simplify(¬("α" ∧ "β")) == ¬("α" ∧ "β")
 
-                @test simplify((⊤ ∧ ⊤)) == ⊤
-                @test simplify((⊤ ∧ ⊥)) == ⊥
-                @test simplify((⊥ ∧ ⊥)) == ⊥
-                @test simplify((⊥ ∧ ⊤)) == ⊥
+                @test simplify("α" ∧ ⊤) == Atom("α")
+                @test simplify(⊤ ∧ "α") == Atom("α")
+                @test simplify("α" ∧ ⊥) == ⊥
+                @test simplify(⊥ ∧ "α") == ⊥
 
-                @test simplify(("α" ∨ ⊤)) == ⊤
-                @test simplify((⊤ ∨ "α")) == ⊤
-                @test simplify(("α" ∨ ⊥)) == Atom("α")
-                @test simplify((⊥ ∨ "α")) == Atom("α")
+                @test simplify(⊤ ∧ ⊤) == ⊤
+                @test simplify(⊤ ∧ ⊥) == ⊥
+                @test simplify(⊥ ∧ ⊥) == ⊥
+                @test simplify(⊥ ∧ ⊤) == ⊥
 
-                @test simplify((⊤ ∨ ⊤)) == ⊤
-                @test simplify((⊤ ∨ ⊥)) == ⊤
-                @test simplify((⊥ ∨ ⊥)) == ⊥
-                @test simplify((⊥ ∨ ⊤)) == ⊤
+                @test simplify("α" ∨ ⊤) == ⊤
+                @test simplify(⊤ ∨ "α") == ⊤
+                @test simplify("α" ∨ ⊥) == Atom("α")
+                @test simplify(⊥ ∨ "α") == Atom("α")
 
-                @test simplify(("α" → ⊤)) == ("α" ∨ ¬("α"))
-                @test simplify((⊤ → "α")) == Atom("α")
-                @test simplify(("α" → ⊥)) == (¬"α")
-                @test simplify((⊥ → "α")) == ("α" ∨ ¬("α"))
+                @test simplify(⊤ ∨ ⊤) == ⊤
+                @test simplify(⊤ ∨ ⊥) == ⊤
+                @test simplify(⊥ ∨ ⊥) == ⊥
+                @test simplify(⊥ ∨ ⊤) == ⊤
 
-                @test simplify((⊤ → ⊤)) == ⊤
-                @test simplify((⊤ → ⊥)) == ⊥
-                @test simplify((⊥ → ⊥)) == ⊤
-                @test simplify((⊥ → ⊤)) == ⊤
+                @test simplify("α" → ⊤) == ("α" ∨ ¬"α")
+                @test simplify(⊤ → "α") == Atom("α")
+                @test simplify("α" → ⊥) == (¬"α")
+                @test simplify(⊥ → "α") == ("α" ∨ ¬"α")
 
-                @test simplify(("α" ↔ ⊤)) == Atom("α")
-                @test simplify((⊤ ↔ "α")) == Atom("α")
-                @test simplify(("α" ↔ ⊥)) == (¬"α")
-                @test simplify((⊥ ↔ "α")) == (¬"α")
+                @test simplify(⊤ → ⊤) == ⊤
+                @test simplify(⊤ → ⊥) == ⊥
+                @test simplify(⊥ → ⊥) == ⊤
+                @test simplify(⊥ → ⊤) == ⊤
 
-                @test simplify((⊤ ↔ ⊤)) == ⊤
-                @test simplify((⊤ ↔ ⊥)) == ⊥
-                @test simplify((⊥ ↔ ⊥)) == ⊤
-                @test simplify((⊥ ↔ ⊤)) == ⊥
+                @test simplify("α" ↔ ⊤) == Atom("α")
+                @test simplify(⊤ ↔ "α") == Atom("α")
+                @test simplify("α" ↔ ⊥) == (¬"α")
+                @test simplify(⊥ ↔ "α") == (¬"α")
+
+                @test simplify(⊤ ↔ ⊤) == ⊤
+                @test simplify(⊤ ↔ ⊥) == ⊥
+                @test simplify(⊥ ↔ ⊥) == ⊤
+                @test simplify(⊥ ↔ ⊤) == ⊥
         end
 
 

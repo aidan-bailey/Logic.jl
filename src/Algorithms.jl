@@ -75,7 +75,6 @@ function cnf(α::Formula)
 end
 export cnf
 
-simplify(α) = simplift(convert(Formula, α))
 function simplify(α::Formula)
     simplify(α::Atom) = α
     simplify(c::Constant) = c
@@ -128,6 +127,7 @@ function simplify(α::Formula)
     end
     return form
 end
+simplify(α) = simplify(convert(Formula, α))
 export simplify
 
 function disjunctiveclauses(α::Formula)::Set{Clause}
