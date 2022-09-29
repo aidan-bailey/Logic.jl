@@ -1,8 +1,4 @@
-module Syntax
-
-##########
-# SYNTAX #
-##########
+module Types
 
 "Propositional formula supertype."
 abstract type Formula end

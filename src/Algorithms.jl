@@ -1,8 +1,8 @@
-module Semantics
+module Algorithms
 
 import PicoSAT
 using Combinatorics
-using ..Syntax
+using ..Types
 
 "Convert a propositional formula into negation normal form." # Efficient
 nnf(α) = nnf(convert(Formula, α))
