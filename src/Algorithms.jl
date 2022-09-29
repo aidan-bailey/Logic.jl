@@ -5,7 +5,6 @@ using Combinatorics
 using ..Types
 
 "Convert a propositional formula into negation normal form." # Efficient
-nnf(α) = nnf(convert(Formula, α))
 nnf(α::Formula) = error("NNF does not yet support $(typeof(α)).")
 nnf(α::Atom) = α
 nnf(α::UnaryOperation) = nnf(operator(α), operand(α))
@@ -19,10 +18,10 @@ nnf(::Negation, α::BinaryOperation{Biconditional}) = nnf(operand1(α) ∨ opera
 nnf(α::BinaryOperation) = BinaryOperation(operator(α), nnf(operand1(α)), nnf(operand2(α)))
 nnf(α::BinaryOperation{Biconditional}) = nnf(operand1(α) ∨ ¬operand2(α)) ∧ nnf(¬operand1(α) ∨ operand2(α))
 nnf(α::BinaryOperation{Implication}) = nnf(¬operand1(α) ∨ operand2(α))
+nnf(α) = nnf(convert(Formula, α))
 export nnf
 
 "Apply the distributive law propogation through a propositional formula." # Broken
-distributive(α) = distributive(convert(Formula, α))
 distributive(α::Formula) = error("Distributive does not yet support $(typeof(α)).")
 distributive(c::Constant) = c
 distributive(α::Atom) = α
@@ -53,10 +52,10 @@ distributive(::Disjunction, α::BinaryOperation{Biconditional}, β::Formula) = d
 # Double Distribution
 distributive(::Disjunction, α::BinaryOperation{Conjunction}, β::BinaryOperation{Conjunction}) = (distributive(operand1(α) ∨ operand1(β)) ∧ distributive(operand1(α) ∨ operand2(β))) ∧ (distributive(operand2(α) ∨ operand1(β)) ∧ distributive(operand2(α) ∨ operand2(β)))
 distributive(::Conjunction, α::BinaryOperation{Disjunction}, β::BinaryOperation{Disjunction}) = (distributive(operand1(α) ∧ operand1(β)) ∨ distributive(operand1(α) ∧ operand2(β))) ∨ (distributive(operand2(α) ∧ operand1(β)) ∨ distributive(operand2(α) ∧ operand2(β)))
+distributive(α) = distributive(convert(Formula, α))
 export distributive
 
 "Convert a propositional formula to conjunctive normal form." # This could probably be a bit more efficient
-cnf(α) = cnf(convert(Formula, α))
 function cnf(α::Formula)
     cnfpass(α::Formula) = α
     cnfpass(c::Constant) = c
@@ -73,6 +72,7 @@ function cnf(α::Formula)
     end
     return form
 end
+cnf(α) = cnf(convert(Formula, α))
 export cnf
 
 function simplify(α::Formula)
