@@ -57,9 +57,9 @@ abstract type UnaryOperator <: Operator end
 export UnaryOperator
 
 "Propositional unary operation type."
-struct UnaryOperation{T<:UnaryOperator} <: Operation
-    operator::T
-    operand::Formula
+struct UnaryOperation{OpType<:UnaryOperator, FormulaType<:Formula} <: Operation
+    operator::OpType
+    operand::FormulaType
 end
 export UnaryOperation
 operand(operation::UnaryOperation) = operation.operand
@@ -93,10 +93,10 @@ abstract type BinaryOperator <: Operator end
 export BinaryOperator
 
 "Propositional binary operation type."
-struct BinaryOperation{T<:BinaryOperator} <: Operation
-    operator::T
-    operand1::Formula
-    operand2::Formula
+struct BinaryOperation{OpType<:BinaryOperator, LFormulaType<:Formula, RFormulaType<:Formula} <: Operation
+    operator::OpType
+    operand1::LFormulaType
+    operand2::RFormulaType
 end
 export BinaryOperation
 operand1(operation::BinaryOperation) = operation.operand1
@@ -177,14 +177,19 @@ export ↔
 "Propositional interpretation type."
 const Interpretation = Set{Atom}
 export Interpretation
-I(atoms::Union{String, Char, Int, Atom}...) = Interpretation(map(a -> a isa Atom ? a : Atom(a), atoms))
+I(atoms::Union{String, Char, Int, Atom}...)::Interpretation = Interpretation(map(a -> a isa Atom ? a : Atom(a), atoms))
 export I
 
-const Literal = Union{Atom, UnaryOperation, Constant}
+const KnowledgeBase = Set{Formula}
+export KnowledgeBase
+K(formulas...)::KnowledgeBase = KnowledgeBase(map(a -> a isa Formula ? a : Base.convert(a), formulas))
+
+const Literal = Union{Atom, UnaryOperation{T, Atom}} where (T <: UnaryOperator)
 export Literal
+
 const Clause = Set{Literal}
-clause(α...) = Clause(map(x -> Base.convert(Formula, x), α))
-export clause
 export Clause
+clause(α...)::Clause = Clause(map(x -> Base.convert(Formula, x), α))
+export clause
 
 end

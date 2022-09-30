@@ -169,16 +169,15 @@ picocnf(α) = picocnf(convert(Formula, α))
 export picocnf
 
 "Get atoms contained in a propositional formula." # Efficient
-atoms(α) = atoms(convert(Formula, α))
 atoms(α::Formula)::Set{Atom} = error("Atoms does not yet support $(typeof(α)).")
 atoms(::Constant)::Set{Atom} = Set()
 atoms(α::Atom)::Set{Atom} = Set([α])
 atoms(α::UnaryOperation)::Set{Atom} = atoms(operand(α))
 atoms(α::BinaryOperation)::Set{Atom} = union(atoms(operand1(α)), atoms(operand2(α)))
+atoms(α) = atoms(convert(Formula, α))
 export atoms
 
 "Check if an interpretation satisfies a propostional formula." # Efficient
-satisfies(v::Interpretation, α) = satisfies(v, convert(Formula, α))
 satisfies(::Interpretation, α::Formula)::Bool = error("Satisfaction does not yet support $(typeof(α)).")
 satisfies(::Interpretation, ::Tautology)::Bool = true
 satisfies(::Interpretation, ::Contradiction)::Bool = false
@@ -190,17 +189,17 @@ satisfies(v::Interpretation, α::BinaryOperation{Conjunction})::Bool = satisfies
 satisfies(v::Interpretation, α::BinaryOperation{Disjunction})::Bool = satisfies(v, operand1(α)) || satisfies(v, operand2(α))
 satisfies(v::Interpretation, α::BinaryOperation{Implication})::Bool = satisfies(v, operand1(α)) <= satisfies(v, operand2(α))
 satisfies(v::Interpretation, α::BinaryOperation{Biconditional})::Bool = satisfies(v, operand1(α)) == satisfies(v, operand2(α))
+satisfies(v::Interpretation, α) = satisfies(v, convert(Formula, α))
 export satisfies
 ⊢ = satisfies
 export ⊢
 
+world(α::Formula)::Set{Interpretation} = union(Interpretation(), Set(map(Interpretation, combinations(atoms(α)))))
 world(α) = world(convert(Formula, α))
-world(α::Formula) = union(Interpretation(), Set(map(Interpretation, combinations(atoms(α)))))
 export world
 
-"Check if a propositional formula is satisfiable." # Efficient
-satisfiable(α) = satisfiable(convert(Formula, α))
-function satisfiable(α::Formula)
+"Check if a propositional formula is satisfiable."
+function satisfiable(α::Formula)::Bool
     form = simplify(cnf(α))
     if form isa Contradiction
         return false
@@ -210,11 +209,11 @@ function satisfiable(α::Formula)
     picoclauses, _ = picocnf(form)
     return PicoSAT.solve(picoclauses) != :unsatisfiable
 end
+satisfiable(α) = satisfiable(convert(Formula, α))
 export satisfiable
 
 "Get the models of a propositional formula."
-models(α) = models(convert(Formula, α))
-function models(α::Formula)::Set{Interpretation} # This is fine
+function models(α::Formula)::Set{Interpretation}
     form = simplify(cnf(α))
 
     if form isa Contradiction
@@ -244,25 +243,23 @@ function models(α::Formula)::Set{Interpretation} # This is fine
     end
     return Set{Interpretation}(result)
 end
+models(α) = models(convert(Formula, α))
 export models
 
-"Check if propositional formula α is a tautology." # Efficient
-istautology(α) = istautology(convert(Formula, α))
+"Check if propositional formula α is a tautology."
+istautology(α::Formula)::Bool = length(models(α)) == 2^length(atoms(α))
 istautology(::Contradiction)::Bool = false
 istautology(::Tautology)::Bool = true
-istautology(α::Formula)::Bool = length(models(α)) == 2^length(atoms(α))
+istautology(α) = istautology(convert(Formula, α))
 export isvalid
 
 "Check if propositional formula α is a contradiction."
-iscontradiction(α) = iscontradiction(convert(Formula, α))
+iscontradiction(α::Formula)::Bool = isempty(models(α))
 iscontradiction(::Contradiction)::Bool = true
 iscontradiction(::Tautology)::Bool = false
-iscontradiction(α::Formula) = isempty(models(α))
+iscontradiction(α) = iscontradiction(convert(Formula, α))
 
-"Check if propositional formula α entails propositional formula β." # Efficient and elegant wow!
-entails(α, β) = entails(convert(Formula, α), convert(Formula, β))
-entails(α::Formula, β) = entails(α, convert(Formula, β))
-entails(α, β::Formula) = entails(α, convert(Formula, β))
+"Check if propositional formula α entails propositional formula β."
 function entails(α::Formula, β::Formula)
     prevalentatoms = intersect(atoms(α), atoms(β))
     models1 = collect(map(m -> intersect(m, prevalentatoms), collect(models(α))))
@@ -274,10 +271,13 @@ function entails(α::Formula, β::Formula)
             )
     )
 end
+entails(α, β) = entails(convert(Formula, α), convert(Formula, β))
+entails(α::Formula, β) = entails(α, convert(Formula, β))
+entails(α, β::Formula) = entails(α, convert(Formula, β))
 entails(α::Formula, ::Tautology) = istautology(α)
 entails(α::Formula, ::Contradiction) = iscontradiction(α)
-entails(::Tautology, ::Tautology) = true            # I think?
-entails(::Contradiction, ::Contradiction) = true    # I think?
+entails(::Tautology, ::Tautology) = true
+entails(::Contradiction, ::Contradiction) = true
 entails(::Contradiction, ::Tautology) = true
 entails(::Tautology, ::Contradiction) = false
 

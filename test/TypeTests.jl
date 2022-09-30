@@ -75,7 +75,7 @@ using Test
             @testset "Negation" begin
                 @test UnaryOperation{Negation} <: UnaryOperation
                 testFormula = UnaryOperation(Negation(), Atom("α"))
-                @test testFormula isa UnaryOperation{Negation}
+                @test testFormula isa UnaryOperation{Negation, Atom}
                 @test operator(testFormula) isa Negation
                 @test operand(testFormula) == Atom("α")
                 @test not(Atom("α")) == testFormula
@@ -130,10 +130,31 @@ using Test
                 @test ("α" ↔ "β") == testFormula
             end
         end
+
     end
 
-    @testset "Compound Formulas" begin
-        # TODO
+    @testset "Aliases" begin
+
+        @testset "KnowledgeBase" begin
+           @test KnowledgeBase <: Set{Formula}
+            @test KnowledgeBase() isa KnowledgeBase
+        end
+
+        @testset "Literal" begin
+           @test Atom <: Literal
+           @test UnaryOperation{UnaryOperator, Atom} <: Literal
+        end
+
+        @testset "Interpretation" begin
+            @test Interpretation <: Set{Atom}
+            @test I() isa Interpretation
+        end
+
+        @testset "Clause" begin
+            @test Clause <: Set{Literal}
+            @test clause() isa Clause
+        end
+
     end
 
 end
