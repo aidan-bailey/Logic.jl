@@ -68,7 +68,7 @@ equiv = Delayed()
 
 atom = (E"T" > Taut) | (E"F" > Contr) | ((PInt() | PFloat64() | Word()) > Atom) | (E"(" + expr + E")" |> Form)
 
-neg.matcher = (E"!" + neg |> Neg) | atom
+neg.matcher = (E"!" + neg > Neg) | atom
 
 and.matcher = (E"&" + and |> And) | neg
 
