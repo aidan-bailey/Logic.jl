@@ -59,6 +59,14 @@ function process(root::Node)
 
 end
 
+tautnotation = (E"T" | E"⊤")
+contrnotation = (E"T" | E"⊥")
+ornotation = (E"|" | E"∨")
+andnotation = (E"&" | E"∧")
+implnotation = (E">" | E"→")
+equivnotation = (E"<>" | E"↔")
+negnotation = (E"!" | E"¬")
+
 expr = Delayed()
 or = Delayed()
 and = Delayed()
@@ -66,17 +74,17 @@ neg = Delayed()
 impl = Delayed()
 equiv = Delayed()
 
-atom = (E"T" > Taut) | (E"F" > Contr) | ((PInt() | PFloat64() | Word()) > Atom) | (E"(" + expr + E")" |> Form)
+atom = (tautnotation > Taut) | (contrnotation > Contr) | ((PInt() | PFloat64() | Word()) > Atom) | (E"(" + expr + E")" |> Form)
 
-neg.matcher = (E"!" + neg > Neg) | atom
+neg.matcher = (negnotation + neg > Neg) | atom
 
-and.matcher = (E"&" + and |> And) | neg
+and.matcher = (andnotation + and |> And) | neg
 
-or.matcher = (E"|" + or |> Or) | and
+or.matcher = (ornotation + or |> Or) | and
 
-impl.matcher = (E">" + impl |> Impl) | or
+impl.matcher = (implnotation + impl |> Impl) | or
 
-equiv.matcher = (E"<>" + neg |> Equiv) | impl
+equiv.matcher = (equivnotation + neg |> Equiv) | impl
 
 form = equiv
 
