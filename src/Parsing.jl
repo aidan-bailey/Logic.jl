@@ -84,6 +84,7 @@ expr.matcher = form[0:end]
 
 start = expr + Eos() |> Form
 
-parse(str::AbstractString)::Formula = process(parse_one(str, start)[1])
+parseform(str::AbstractString)::Formula = process(parse_one(str, start)[1])
+export parseform
 
 end
