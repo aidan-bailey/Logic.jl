@@ -17,13 +17,19 @@ using Test
     @testset "Negation" begin
 
         @test parseform("!a") == not(Atom("a"))
-        @test parseform("!!a") == not(not(Atom("a")))
+        @test parseform("¬a") == not(Atom("a"))
+        @test parseform("!a") == not(Atom("a"))
+        @test parseform("¬¬a") == not(not(Atom("a")))
+        @test parseform("¬!a") == not(not(Atom("a")))
 
     end
 
     @testset "Disjunction" begin
 
         @test parseform("a|b") == or("a", "b")
+        @test parseform("!a|b") == or(not("a"), "b")
+        @test parseform("¬(a|b)") == not(or("a", "b"))
+        @test parseform("¬(a|!b)") == not(or("a", not("b")))
 
     end
 
