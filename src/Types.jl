@@ -32,6 +32,7 @@ Base.print(io::IO, ::Contradiction) = print(io, "⊥")
 struct Atom <: Formula
     name::Union{String, Int}
     Atom(n::Int) = new(n)
+    Atom(n::SubString) = new(string(n))
     Atom(n::String) = new(n)
     Atom(n::Char) = new(string(n))
 end
