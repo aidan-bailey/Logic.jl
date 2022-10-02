@@ -11,44 +11,44 @@ using Test
 
     @testset "Atom" begin
 
-        @test parseform("a") == Atom("a")
+        @test str2form("a") == Atom("a")
 
     end
 
     @testset "Negation" begin
 
-        @test parseform("!a") == not(Atom("a"))
-        @test parseform("¬a") == not(Atom("a"))
-        @test parseform("!a") == not(Atom("a"))
-        @test parseform("¬¬a") == not(not(Atom("a")))
-        @test parseform("¬!a") == not(not(Atom("a")))
+        @test str2form("!a") == not(Atom("a"))
+        @test str2form("¬a") == not(Atom("a"))
+        @test str2form("!a") == not(Atom("a"))
+        @test str2form("¬¬a") == not(not(Atom("a")))
+        @test str2form("¬!a") == not(not(Atom("a")))
 
     end
 
     @testset "Disjunction" begin
 
-        @test parseform("a|b") == or("a", "b")
-        @test parseform("!a|b") == or(not("a"), "b")
-        @test parseform("¬(a|b)") == not(or("a", "b"))
-        @test parseform("¬(a|!b)") == not(or("a", not("b")))
+        @test str2form("a|b") == or("a", "b")
+        @test str2form("!a|b") == or(not("a"), "b")
+        @test str2form("¬(a|b)") == not(or("a", "b"))
+        @test str2form("¬(a|!b)") == not(or("a", not("b")))
 
     end
 
     @testset "Conjunction" begin
 
-        @test parseform("a&b") == and("a", "b")
+        @test str2form("a&b") == and("a", "b")
 
     end
 
     @testset "Implication" begin
 
-        @test parseform("a>b") == implies("a", "b")
+        @test str2form("a>b") == implies("a", "b")
 
     end
 
     @testset "Biconditional" begin
 
-        @test parseform("a<>b") == equals("a", "b")
+        @test str2form("a<>b") == equals("a", "b")
 
     end
 

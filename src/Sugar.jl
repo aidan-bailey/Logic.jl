@@ -3,8 +3,8 @@ module Sugar
 using ..Syntax
 using ..Parsing
 
-Base.convert(::Type{Formula}, x::String) = parseform(x)
-Base.convert(::Type{Formula}, x::Char) = parseform(string(x))
+Base.convert(::Type{Formula}, x::String) = str2form(x)
+Base.convert(::Type{Formula}, x::Char) = str2form(string(x))
 Base.convert(::Type{Formula}, x::Int) = Syntax.Atom(x)
 Base.convert(::Type{Formula}, x::Formula) = x
 

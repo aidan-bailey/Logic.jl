@@ -38,19 +38,19 @@ using Test
 
         @testset "Negation Normal Form" begin
                 @test nnf('α') == Atom('α')
-                @test nnf("¬α") == parseform("¬α")
+                @test nnf("¬α") == str2form("¬α")
 
-                @test nnf("α∧β") == parseform("α∧β")
-                @test nnf("¬(α∧β)") == parseform("¬α∨¬β")
+                @test nnf("α∧β") == str2form("α∧β")
+                @test nnf("¬(α∧β)") == str2form("¬α∨¬β")
 
-                @test nnf("α∨β") == parseform("α∨β")
-                @test nnf("¬(α∨β)") == parseform("¬α∧¬β")
+                @test nnf("α∨β") == str2form("α∨β")
+                @test nnf("¬(α∨β)") == str2form("¬α∧¬β")
 
-                @test nnf("α→β") == parseform("¬α∨β")
-                @test nnf("¬(α→β)") == parseform("α∧¬β")
+                @test nnf("α→β") == str2form("¬α∨β")
+                @test nnf("¬(α→β)") == str2form("α∧¬β")
 
-                @test nnf("α↔β") == parseform("(α∨¬β)∧(¬α∨β)")
-                @test nnf("¬(α↔β)") == parseform("(α∨β)∧(¬α∨¬β)")
+                @test nnf("α↔β") == str2form("(α∨¬β)∧(¬α∨β)")
+                @test nnf("¬(α↔β)") == str2form("(α∨β)∧(¬α∨¬β)")
         end
 
         @testset "Distributive" begin
