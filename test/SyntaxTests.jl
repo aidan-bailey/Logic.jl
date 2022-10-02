@@ -2,6 +2,7 @@ module SyntaxTests
 
 include("../src/PropositionalLogic.jl")
 using .PropositionalLogic.Syntax
+using .PropositionalLogic.Sugar
 
 using Test
 

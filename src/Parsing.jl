@@ -17,7 +17,7 @@ struct Contr <: Node end
 
 process(root::Atom) = Syntax.Atom(root.val)
 
-process(root::Neg) = Syntax.not(process(root.val))
+process(root::Neg) = Syntax.UnaryOperation(Syntax.Negation(), process(root.val))
 
 process(::Taut) = Syntax.Tautology()
 
@@ -40,13 +40,13 @@ function process(root::Node)
             if op isa precop
                 deleteat!(root.val, i)
                 if op isa And
-                    processedChildren[i-1] = Syntax.and(processedChildren[i-1], processedChildren[i])
+                    processedChildren[i-1] = Syntax.BinaryOperation(Syntax.Conjunction(),processedChildren[i-1], processedChildren[i])
                 elseif op isa Or
-                    processedChildren[i-1] = Syntax.or(processedChildren[i-1], processedChildren[i])
+                    processedChildren[i-1] = Syntax.BinaryOperation(Syntax.Disjunction(), processedChildren[i-1], processedChildren[i])
                 elseif op isa Impl
-                    processedChildren[i-1] = Syntax.implies(processedChildren[i-1], processedChildren[i])
+                    processedChildren[i-1] = Syntax.BinaryOperation(Syntax.Implication(), processedChildren[i-1], processedChildren[i])
                 elseif op isa Equiv
-                    processedChildren[i-1] = Syntax.equals(processedChildren[i-1], processedChildren[i])
+                    processedChildren[i-1] = Syntax.BinaryOperation(Syntax.Biconditional(), processedChildren[i-1], processedChildren[i])
                 end
                 deleteat!(processedChildren, i)
             else
@@ -94,5 +94,9 @@ start = expr + Eos() |> Form
 
 parseform(str::AbstractString)::Formula = process(parse_one(str, start)[1])
 export parseform
+
+Base.convert(::Type{Formula}, x::String) = parseform(x)
+Base.convert(::Type{Formula}, x::Char) = parseform(string(x))
+Base.convert(::Type{Formula}, x::Int) = Syntax.Atom(x)
 
 end

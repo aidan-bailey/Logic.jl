@@ -3,6 +3,7 @@ module Semantics
 import PicoSAT
 using Combinatorics
 using ..Syntax
+using ..Sugar
 
 "Propositional interpretation type."
 const Interpretation = Set{Atom}
