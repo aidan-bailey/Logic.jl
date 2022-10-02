@@ -1,58 +1,52 @@
 module Sugar
 
 using ..Syntax
+using ..Parsing
 
-const ⊤ = Tautology()
-export ⊤
+Base.convert(::Type{Formula}, x::String) = parseform(x)
+Base.convert(::Type{Formula}, x::Char) = parseform(string(x))
+Base.convert(::Type{Formula}, x::Int) = Syntax.Atom(x)
+Base.convert(::Type{Formula}, x::Formula) = x
+
 const tautology = Tautology()
-export tautology
+const ⊤ = Tautology()
+export tautology, ⊤
 
-const ⊥ = Contradiction()
-export ⊥
 const contradiction = Contradiction()
-export contradiction
+const ⊥ = Contradiction()
+export contradiction, ⊥
 
-not(α::Union{Formula,String}) = UnaryOperation(Negation(), α isa String ? Atom(α) : α)
-export not
+const negation = Negation()
+not(α) = UnaryOperation(negation, convert(Formula, α))
 const ¬ = not
-export ¬
-negation = Negation()
-export negation
+export negation, not, ¬
 
 const disjunction = Disjunction()
-export disjunction
-or(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
-    Disjunction(), α isa String ? Atom(α) : α, β isa String ? Atom(β) : β
+or(α, β) = BinaryOperation(
+    disjunction, convert(Formula, α), convert(Formula, β)
 )
-export or
 const ∨ = or
-export ∨
+export disjunction, or, ∨
 
 const conjunction = Conjunction()
-export conjunction
-and(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
-    Conjunction(), α isa String ? Atom(α) : α, β isa String ? Atom(β) : β
+and(α, β) = BinaryOperation(
+    conjunction, convert(Formula, α), convert(Formula, β)
 )
-export and
 const ∧ = and
-export ∧
+export conjunction, and, ∧
 
 const implication = Implication()
-export implication
-implies(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
-    Implication(), α isa String ? Atom(α) : α, β isa String ? Atom(β) : β
+implies(α, β) = BinaryOperation(
+    implication, convert(Formula, α), convert(Formula, β)
 )
-export implies
 const → = implies
-export →
+export implication, implies, →
 
-equals(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
-    Biconditional(), α isa String ? Atom(α) : α, β isa String ? Atom(β) : β
-)
-export equals
-const ↔ = equals
-export ↔
 const biconditional = Biconditional()
-export biconditional
+equals(α, β) = BinaryOperation(
+    biconditional, convert(Formula, α), convert(Formula, β)
+)
+const ↔ = equals
+export biconditional, equals, ↔
 
 end

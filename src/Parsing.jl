@@ -95,8 +95,4 @@ start = expr + Eos() |> Form
 parseform(str::AbstractString)::Formula = process(parse_one(str, start)[1])
 export parseform
 
-Base.convert(::Type{Formula}, x::String) = parseform(x)
-Base.convert(::Type{Formula}, x::Char) = parseform(string(x))
-Base.convert(::Type{Formula}, x::Int) = Syntax.Atom(x)
-
 end
