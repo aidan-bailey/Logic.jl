@@ -1,12 +1,38 @@
-module ConversionTests
+module SemanticsTests
 
 include("../src/PropositionalLogic.jl")
-using .PropositionalLogic.Types
-using .PropositionalLogic.Algorithms
+using .PropositionalLogic.Syntax
+using .PropositionalLogic.Semantics
 
 using Test
 
-@testset "Conversions" begin
+@testset "Semantics" begin
+
+    @testset "Aliases" begin
+
+        @testset "KnowledgeBase" begin
+           @test KnowledgeBase <: Set{Formula}
+            @test KnowledgeBase() isa KnowledgeBase
+        end
+
+        @testset "Literal" begin
+           @test Atom <: Literal
+           @test UnaryOperation{UnaryOperator, Atom} <: Literal
+        end
+
+        @testset "Interpretation" begin
+            @test Interpretation <: Set{Atom}
+            @test I() isa Interpretation
+        end
+
+        @testset "Clause" begin
+            @test Clause <: Set{Literal}
+            @test clause() isa Clause
+        end
+
+    end
+
+    @testset "Conversions" begin
 
         @testset "Negation Normal Form" begin
                 @test nnf("α") == Atom("α")
@@ -120,6 +146,65 @@ using Test
             @test disjunctiveclauses(¬"a" ∨ "b") == Set([clause(¬"a",  "b")])
 
         end
+
+
+    end
+
+
+    @testset "Models" begin
+
+        @test models("a") == Set([I("a")])
+        @test models(¬"a") == Set([I()])
+
+        @test models("a" ∨ "b") == Set([
+             I("a"),
+             I("b"),
+             I("a", "b"),
+         ])
+
+        @test models(¬("a" ∨ "b")) == Set([
+            I(),
+        ])
+
+        @test models(¬("a" ∧ "b")) == Set([
+             I("a"),
+             I("b"),
+             I()
+         ])
+
+        @test models("a" → "b") == Set([
+            I(),
+            I("b"),
+            I("a", "b"),
+        ])
+
+        @test models(¬("a" → "b")) == Set([
+            I("a"),
+        ])
+
+        @test models("a" ↔ "b") == Set([
+            I(),
+            I("a", "b"),
+        ])
+
+        @test models(¬("a" ↔ "b")) == Set([
+            I("b"),
+            I("a"),
+        ])
+
+    end
+
+    @testset "Entailment" begin
+
+        @test entails("a", "a")
+        @test entails(¬"a", ¬"a")
+        @test entails("a" ∧ "b", "a")
+        @test entails("a" ∧ "b", "a" ∧ "b")
+        @test entails("a" → "b", "a")
+        @test entails("a" ↔ "b", "a" ∧ "b")
+        @test entails("a" ∧ "b", "a" ↔ "b")
+
+    end
 
 end
 

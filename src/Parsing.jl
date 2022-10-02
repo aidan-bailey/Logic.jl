@@ -1,6 +1,6 @@
 module Parsing
 
-using ..Types
+using ..Syntax
 
 using ParserCombinator
 
@@ -15,17 +15,17 @@ struct Equiv <: Node val end
 struct Taut <: Node end
 struct Contr <: Node end
 
-process(root::Atom) = Types.Atom(root.val)
+process(root::Atom) = Syntax.Atom(root.val)
 
-process(root::Neg) = Types.not(process(root.val))
+process(root::Neg) = Syntax.not(process(root.val))
 
-process(::Taut) = Types.Tautology()
+process(::Taut) = Syntax.Tautology()
 
-process(::Contr) = Types.Contradiction()
+process(::Contr) = Syntax.Contradiction()
 
 function process(root::Node)
 
-    processedChildren::Vector{Types.Formula} = map(process, root.val)
+    processedChildren::Vector{Syntax.Formula} = map(process, root.val)
 
     if length(processedChildren) == 1
         return processedChildren[1]
@@ -40,13 +40,13 @@ function process(root::Node)
             if op isa precop
                 deleteat!(root.val, i)
                 if op isa And
-                    processedChildren[i-1] = Types.and(processedChildren[i-1], processedChildren[i])
+                    processedChildren[i-1] = Syntax.and(processedChildren[i-1], processedChildren[i])
                 elseif op isa Or
-                    processedChildren[i-1] = Types.or(processedChildren[i-1], processedChildren[i])
+                    processedChildren[i-1] = Syntax.or(processedChildren[i-1], processedChildren[i])
                 elseif op isa Impl
-                    processedChildren[i-1] = Types.implies(processedChildren[i-1], processedChildren[i])
+                    processedChildren[i-1] = Syntax.implies(processedChildren[i-1], processedChildren[i])
                 elseif op isa Equiv
-                    processedChildren[i-1] = Types.equals(processedChildren[i-1], processedChildren[i])
+                    processedChildren[i-1] = Syntax.equals(processedChildren[i-1], processedChildren[i])
                 end
                 deleteat!(processedChildren, i)
             else

@@ -1,4 +1,4 @@
-module Types
+module Syntax
 
 "Propositional formula supertype."
 abstract type Formula end
@@ -174,23 +174,5 @@ equals(α::Union{Formula,String}, β::Union{Formula,String}) = BinaryOperation(
 export equals
 const ↔ = equals
 export ↔
-
-"Propositional interpretation type."
-const Interpretation = Set{Atom}
-export Interpretation
-I(atoms::Union{String, Char, Int, Atom}...)::Interpretation = Interpretation(map(a -> a isa Atom ? a : Atom(a), atoms))
-export I
-
-const KnowledgeBase = Set{Formula}
-export KnowledgeBase
-K(formulas...)::KnowledgeBase = KnowledgeBase(map(a -> a isa Formula ? a : Base.convert(Formula, a), formulas))
-
-const Literal = Union{Atom, UnaryOperation{T, Atom}} where (T <: UnaryOperator)
-export Literal
-
-const Clause = Set{Literal}
-export Clause
-clause(α...)::Clause = Clause(map(x -> Base.convert(Formula, x), α))
-export clause
 
 end

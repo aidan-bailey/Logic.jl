@@ -1,7 +1,7 @@
-module PropositionalSyntaxTests
+module SyntaxTests
 
 include("../src/PropositionalLogic.jl")
-using .PropositionalLogic.Types
+using .PropositionalLogic.Syntax
 
 using Test
 
@@ -129,30 +129,6 @@ using Test
                 @test ↔(Atom("α"), Atom("β")) == testFormula
                 @test ("α" ↔ "β") == testFormula
             end
-        end
-
-    end
-
-    @testset "Aliases" begin
-
-        @testset "KnowledgeBase" begin
-           @test KnowledgeBase <: Set{Formula}
-            @test KnowledgeBase() isa KnowledgeBase
-        end
-
-        @testset "Literal" begin
-           @test Atom <: Literal
-           @test UnaryOperation{UnaryOperator, Atom} <: Literal
-        end
-
-        @testset "Interpretation" begin
-            @test Interpretation <: Set{Atom}
-            @test I() isa Interpretation
-        end
-
-        @testset "Clause" begin
-            @test Clause <: Set{Literal}
-            @test clause() isa Clause
         end
 
     end

@@ -1,11 +1,11 @@
 module PropositionalLogic
 
-include("Types.jl")
+include("Syntax.jl")
 include("Parsing.jl")
-include("Algorithms.jl")
+include("Semantics.jl")
 
-using .Types
-using .Algorithms
+using .Syntax
 using .Parsing
+using .Semantics
 
 end # module

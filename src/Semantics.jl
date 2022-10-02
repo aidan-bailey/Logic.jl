@@ -1,8 +1,26 @@
-module Algorithms
+module Semantics
 
 import PicoSAT
 using Combinatorics
-using ..Types
+using ..Syntax
+
+"Propositional interpretation type."
+const Interpretation = Set{Atom}
+export Interpretation
+I(atoms::Union{String, Char, Int, Atom}...)::Interpretation = Interpretation(map(a -> a isa Atom ? a : Atom(a), atoms))
+export I
+
+const KnowledgeBase = Set{Formula}
+export KnowledgeBase
+K(formulas...)::KnowledgeBase = KnowledgeBase(map(a -> a isa Formula ? a : Base.convert(Formula, a), formulas))
+
+const Literal = Union{Atom, UnaryOperation{T, Atom}} where (T <: UnaryOperator)
+export Literal
+
+const Clause = Set{Literal}
+export Clause
+clause(α...)::Clause = Clause(map(x -> Base.convert(Formula, x), α))
+export clause
 
 "Convert a propositional formula into negation normal form." # Efficient
 function nnf(α::Formula)::Formula

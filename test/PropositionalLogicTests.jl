@@ -1,8 +1,7 @@
 module PropositionalTests
 
-include("TypeTests.jl")
+include("SyntaxTests.jl")
 include("ParsingTests.jl")
-include("ConversionTests.jl")
-include("AlgorithmTests.jl")
+include("SemanticsTests.jl")
 
 end

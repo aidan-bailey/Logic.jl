@@ -1,7 +1,7 @@
 module ParsingTests
 
 include("../src/PropositionalLogic.jl")
-using .PropositionalLogic.Types
+using .PropositionalLogic.Syntax
 using .PropositionalLogic.Parsing
 
 using Test
