@@ -60,7 +60,7 @@ function process(root::Node)
 end
 
 tautnotation = (E"T" | E"⊤")
-contrnotation = (E"T" | E"⊥")
+contrnotation = (E"F" | E"⊥")
 ornotation = (E"|" | E"∨")
 andnotation = (E"&" | E"∧")
 implnotation = (E">" | E"→")
