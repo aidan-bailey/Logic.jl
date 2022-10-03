@@ -17,7 +17,7 @@ using Test
             @test KnowledgeBase() isa KnowledgeBase
             @test K() isa KnowledgeBase
             @test K("a") == KnowledgeBase([Atom("a")])
-            @test K(Atom("b")) == KnowledgeBase([Atom("a")])
+            @test K(Atom("a")) == KnowledgeBase([Atom("a")])
             @test K("a", Atom("b")) == KnowledgeBase([Atom("a"), Atom("b")])
             @test K("a∧b") == KnowledgeBase([and("a", "b")])
         end
@@ -45,6 +45,12 @@ using Test
     @testset "Conversions" begin
 
         @testset "Negation Normal Form" begin
+            @test nnf('T') == tautology
+            @test nnf("¬T") == not(tautology)
+
+            @test nnf("F") == contradiction
+            @test nnf("¬F") == not(contradiction)
+
             @test nnf('α') == Atom('α')
             @test nnf("¬α") == str2form("¬α")
 
@@ -83,7 +89,7 @@ using Test
         end
 
         @testset "Conjunctive Normal Form" begin
-            @test cnf(('α' → 'β') → 'γ') == ('α' ∨ 'γ') ∧ (¬'β' ∨ 'γ')
+            @test cnf("α→β→γ") == ('α' ∨ 'γ') ∧ (¬'β' ∨ 'γ')
             @test (cnf('α' → ('β' → 'γ'))) == (¬'α' ∨ (¬'β' ∨ 'γ'))
         end
 
@@ -213,6 +219,8 @@ using Test
         @test entails('a' → 'b', 'a')
         @test entails('a' ↔ 'b', 'a' ∧ 'b')
         @test entails('a' ∧ 'b', 'a' ↔ 'b')
+
+        @test entails(K("a", "b"), "a∧b")
 
     end
 
