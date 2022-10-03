@@ -13,7 +13,8 @@ export I
 
 const KnowledgeBase = Set{Formula}
 export KnowledgeBase
-K(formulas...)::KnowledgeBase = KnowledgeBase(map(a -> a isa Formula ? a : Base.convert(Formula, a), formulas))
+K(formulas...)::KnowledgeBase = KnowledgeBase(map(a -> Base.convert(Formula, a), formulas))
+export K
 
 const Literal = Union{Atom, UnaryOperation{T, Atom}} where (T <: UnaryOperator)
 export Literal
