@@ -67,32 +67,10 @@ using Test
             @test nnf("¬(α↔β)") == str2form("(α∨β)∧(¬α∨¬β)")
         end
 
-        @testset "Distributive" begin
-
-            @test distributive('α') == Atom('α')
-            @test distributive('α' ∧ 'β') == ('α' ∧ 'β')
-            @test distributive('α' ∨ 'β') == ('α' ∨ 'β')
-            @test distributive('α' → 'β') == ('α' → 'β')
-            @test distributive('α' ↔ 'β') == ('α' ↔ 'β')
-
-            @test distributive('α' ∧ ('β' ∨ 'γ')) == (('α' ∧ 'β') ∨ ('α' ∧ 'γ'))
-            @test distributive('α' ∨ ('β' ∧ 'γ')) == (('α' ∨ 'β') ∧ ('α' ∨ 'γ'))
-            @test distributive('α' ∧ ('β' ∧ 'γ')) == (('α' ∧ 'β') ∧ ('α' ∧ 'γ'))
-            @test distributive('α' ∨ ('β' ∨ 'γ')) == (('α' ∨ 'β') ∨ ('α' ∨ 'γ'))
-            @test distributive('α' → ('β' → 'γ')) == (('α' → 'β') → ('α' → 'γ'))
-            @test distributive('α' → ('β' ↔ 'γ')) == (('α' → 'β') ↔ ('α' → 'γ'))
-            @test distributive('α' → ('β' ∧ 'γ')) == (('α' → 'β') ∧ ('α' → 'γ'))
-            @test distributive('α' → ('β' ↔ 'γ')) == (('α' → 'β') ↔ ('α' → 'γ'))
-
-            @test distributive(('α' ∧ 'β') ∨ ('γ' ∧ 'δ')) == ((('α' ∨ 'γ') ∧ ('α' ∨ 'δ')) ∧ (('β' ∨ 'γ') ∧ ('β' ∨ 'δ')))
-
-        end
-
-        @testset "Conjunctive Normal Form" begin
+       @testset "Conjunctive Normal Form" begin
             @test cnf("α→β→γ") == ('α' ∨ 'γ') ∧ (¬'β' ∨ 'γ')
             @test (cnf('α' → ('β' → 'γ'))) == (¬'α' ∨ (¬'β' ∨ 'γ'))
         end
-
 
         @testset "Simplify" begin
 
