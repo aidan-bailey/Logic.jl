@@ -7,6 +7,19 @@ Base.convert(::Type{Formula}, x::String) = str2form(x)
 Base.convert(::Type{Formula}, x::Char) = str2form(string(x))
 Base.convert(::Type{Formula}, x::Int) = Syntax.Atom(x)
 Base.convert(::Type{Formula}, x::Formula) = x
+function Base.convert(::Type{Formula}, x::KnowledgeBase)
+    if isempty(x)
+        return Contradiction()
+    elseif length(x) == 1
+        return pop!(collect(x))
+    end
+    kCopy = copy(x)
+    form = pop!(kCopy)
+    while !isempty(kCopy)
+        form = and(form, pop!(kCopy))
+    end
+    return form
+end
 
 const tautology = Tautology()
 const ⊤ = Tautology()
@@ -48,5 +61,14 @@ equals(α, β) = BinaryOperation(
 )
 const ↔ = equals
 export biconditional, equals, ↔
+
+I(atoms::Union{String, Char, Int, Atom}...) = Interpretation(map(a -> a isa Atom ? a : Atom(a), atoms))
+export I
+
+K(formulas...) = KnowledgeBase(map(a -> Base.convert(Formula, a), formulas))
+export K
+
+clause(α...) = Clause(map(x -> Base.convert(Formula, x), α))
+export clause
 
 end
