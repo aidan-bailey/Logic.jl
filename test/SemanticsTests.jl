@@ -13,18 +13,26 @@ using Test
     @testset "Aliases" begin
 
         @testset "KnowledgeBase" begin
-           @test KnowledgeBase <: Set{Formula}
+            @test KnowledgeBase <: Set{Formula}
             @test KnowledgeBase() isa KnowledgeBase
+            @test K() isa KnowledgeBase
+            @test K("a") == KnowledgeBase([Atom("a")])
+            @test K(Atom("b")) == KnowledgeBase([Atom("a")])
+            @test K("a", Atom("b")) == KnowledgeBase([Atom("a"), Atom("b")])
+            @test K("a∧b") == KnowledgeBase([and("a", "b")])
         end
 
         @testset "Literal" begin
-           @test Atom <: Literal
-           @test UnaryOperation{UnaryOperator, Atom} <: Literal
+            @test Atom <: Literal
+            @test UnaryOperation{UnaryOperator,Atom} <: Literal
         end
 
         @testset "Interpretation" begin
             @test Interpretation <: Set{Atom}
             @test I() isa Interpretation
+            @test I(Atom("a")) == Interpretation([Atom("a")])
+            @test I("a") == Interpretation([Atom("a")])
+            @test I("a", Atom("b")) == Interpretation([Atom("a"), Atom("b")])
         end
 
         @testset "Clause" begin
@@ -37,97 +45,97 @@ using Test
     @testset "Conversions" begin
 
         @testset "Negation Normal Form" begin
-                @test nnf('α') == Atom('α')
-                @test nnf("¬α") == str2form("¬α")
+            @test nnf('α') == Atom('α')
+            @test nnf("¬α") == str2form("¬α")
 
-                @test nnf("α∧β") == str2form("α∧β")
-                @test nnf("¬(α∧β)") == str2form("¬α∨¬β")
+            @test nnf("α∧β") == str2form("α∧β")
+            @test nnf("¬(α∧β)") == str2form("¬α∨¬β")
 
-                @test nnf("α∨β") == str2form("α∨β")
-                @test nnf("¬(α∨β)") == str2form("¬α∧¬β")
+            @test nnf("α∨β") == str2form("α∨β")
+            @test nnf("¬(α∨β)") == str2form("¬α∧¬β")
 
-                @test nnf("α→β") == str2form("¬α∨β")
-                @test nnf("¬(α→β)") == str2form("α∧¬β")
+            @test nnf("α→β") == str2form("¬α∨β")
+            @test nnf("¬(α→β)") == str2form("α∧¬β")
 
-                @test nnf("α↔β") == str2form("(α∨¬β)∧(¬α∨β)")
-                @test nnf("¬(α↔β)") == str2form("(α∨β)∧(¬α∨¬β)")
+            @test nnf("α↔β") == str2form("(α∨¬β)∧(¬α∨β)")
+            @test nnf("¬(α↔β)") == str2form("(α∨β)∧(¬α∨¬β)")
         end
 
         @testset "Distributive" begin
 
-                @test distributive('α') == Atom('α')
-                @test distributive('α' ∧ 'β') == ('α' ∧ 'β')
-                @test distributive('α' ∨ 'β') == ('α' ∨ 'β')
-                @test distributive('α' → 'β') == ('α' → 'β')
-                @test distributive('α' ↔ 'β') == ('α' ↔ 'β')
+            @test distributive('α') == Atom('α')
+            @test distributive('α' ∧ 'β') == ('α' ∧ 'β')
+            @test distributive('α' ∨ 'β') == ('α' ∨ 'β')
+            @test distributive('α' → 'β') == ('α' → 'β')
+            @test distributive('α' ↔ 'β') == ('α' ↔ 'β')
 
-                @test distributive('α' ∧ ('β' ∨ 'γ')) == (('α' ∧ 'β') ∨ ('α' ∧ 'γ'))
-                @test distributive('α' ∨ ('β' ∧ 'γ')) == (('α' ∨ 'β') ∧ ('α' ∨ 'γ'))
-                @test distributive('α' ∧ ('β' ∧ 'γ')) == (('α' ∧ 'β') ∧ ('α' ∧ 'γ'))
-                @test distributive('α' ∨ ('β' ∨ 'γ')) == (('α' ∨ 'β') ∨ ('α' ∨ 'γ'))
-                @test distributive('α' → ('β' → 'γ')) == (('α' → 'β') → ('α' → 'γ'))
-                @test distributive('α' → ('β' ↔ 'γ')) == (('α' → 'β') ↔ ('α' → 'γ'))
-                @test distributive('α' → ('β' ∧ 'γ')) == (('α' → 'β') ∧ ('α' → 'γ'))
-                @test distributive('α' → ('β' ↔ 'γ')) == (('α' → 'β') ↔ ('α' → 'γ'))
+            @test distributive('α' ∧ ('β' ∨ 'γ')) == (('α' ∧ 'β') ∨ ('α' ∧ 'γ'))
+            @test distributive('α' ∨ ('β' ∧ 'γ')) == (('α' ∨ 'β') ∧ ('α' ∨ 'γ'))
+            @test distributive('α' ∧ ('β' ∧ 'γ')) == (('α' ∧ 'β') ∧ ('α' ∧ 'γ'))
+            @test distributive('α' ∨ ('β' ∨ 'γ')) == (('α' ∨ 'β') ∨ ('α' ∨ 'γ'))
+            @test distributive('α' → ('β' → 'γ')) == (('α' → 'β') → ('α' → 'γ'))
+            @test distributive('α' → ('β' ↔ 'γ')) == (('α' → 'β') ↔ ('α' → 'γ'))
+            @test distributive('α' → ('β' ∧ 'γ')) == (('α' → 'β') ∧ ('α' → 'γ'))
+            @test distributive('α' → ('β' ↔ 'γ')) == (('α' → 'β') ↔ ('α' → 'γ'))
 
-                @test distributive(('α' ∧ 'β') ∨ ('γ' ∧ 'δ')) == ((('α' ∨ 'γ') ∧ ('α' ∨ 'δ')) ∧ (('β' ∨ 'γ') ∧ ('β' ∨ 'δ')))
+            @test distributive(('α' ∧ 'β') ∨ ('γ' ∧ 'δ')) == ((('α' ∨ 'γ') ∧ ('α' ∨ 'δ')) ∧ (('β' ∨ 'γ') ∧ ('β' ∨ 'δ')))
 
         end
 
         @testset "Conjunctive Normal Form" begin
-                @test cnf(('α' → 'β') → 'γ') == ('α' ∨ 'γ') ∧ (¬'β' ∨ 'γ')
-                @test (cnf('α' → ('β' → 'γ'))) == (¬'α' ∨ (¬'β' ∨ 'γ'))
+            @test cnf(('α' → 'β') → 'γ') == ('α' ∨ 'γ') ∧ (¬'β' ∨ 'γ')
+            @test (cnf('α' → ('β' → 'γ'))) == (¬'α' ∨ (¬'β' ∨ 'γ'))
         end
 
 
         @testset "Simplify" begin
 
-                @test simplify('α') == Atom('α')
-                @test simplify(¬'α') == (¬'α')
-                @test simplify(¬⊤) == ⊥
-                @test simplify(¬⊥) == ⊤
-                @test simplify('α' ∧ 'β') == ('α' ∧ 'β')
-                @test simplify(¬('α' ∧ 'β')) == ¬('α' ∧ 'β')
+            @test simplify('α') == Atom('α')
+            @test simplify(¬'α') == (¬'α')
+            @test simplify(¬⊤) == ⊥
+            @test simplify(¬⊥) == ⊤
+            @test simplify('α' ∧ 'β') == ('α' ∧ 'β')
+            @test simplify(¬('α' ∧ 'β')) == ¬('α' ∧ 'β')
 
-                @test simplify('α' ∧ ⊤) == Atom('α')
-                @test simplify(⊤ ∧ 'α') == Atom('α')
-                @test simplify('α' ∧ ⊥) == ⊥
-                @test simplify(⊥ ∧ 'α') == ⊥
+            @test simplify('α' ∧ ⊤) == Atom('α')
+            @test simplify(⊤ ∧ 'α') == Atom('α')
+            @test simplify('α' ∧ ⊥) == ⊥
+            @test simplify(⊥ ∧ 'α') == ⊥
 
-                @test simplify(⊤ ∧ ⊤) == ⊤
-                @test simplify(⊤ ∧ ⊥) == ⊥
-                @test simplify(⊥ ∧ ⊥) == ⊥
-                @test simplify(⊥ ∧ ⊤) == ⊥
+            @test simplify(⊤ ∧ ⊤) == ⊤
+            @test simplify(⊤ ∧ ⊥) == ⊥
+            @test simplify(⊥ ∧ ⊥) == ⊥
+            @test simplify(⊥ ∧ ⊤) == ⊥
 
-                @test simplify('α' ∨ ⊤) == ⊤
-                @test simplify(⊤ ∨ 'α') == ⊤
-                @test simplify('α' ∨ ⊥) == Atom('α')
-                @test simplify(⊥ ∨ 'α') == Atom('α')
+            @test simplify('α' ∨ ⊤) == ⊤
+            @test simplify(⊤ ∨ 'α') == ⊤
+            @test simplify('α' ∨ ⊥) == Atom('α')
+            @test simplify(⊥ ∨ 'α') == Atom('α')
 
-                @test simplify(⊤ ∨ ⊤) == ⊤
-                @test simplify(⊤ ∨ ⊥) == ⊤
-                @test simplify(⊥ ∨ ⊥) == ⊥
-                @test simplify(⊥ ∨ ⊤) == ⊤
+            @test simplify(⊤ ∨ ⊤) == ⊤
+            @test simplify(⊤ ∨ ⊥) == ⊤
+            @test simplify(⊥ ∨ ⊥) == ⊥
+            @test simplify(⊥ ∨ ⊤) == ⊤
 
-                @test simplify('α' → ⊤) == ('α' ∨ ¬'α')
-                @test simplify(⊤ → 'α') == Atom('α')
-                @test simplify('α' → ⊥) == (¬'α')
-                @test simplify(⊥ → 'α') == ('α' ∨ ¬'α')
+            @test simplify('α' → ⊤) == ('α' ∨ ¬'α')
+            @test simplify(⊤ → 'α') == Atom('α')
+            @test simplify('α' → ⊥) == (¬'α')
+            @test simplify(⊥ → 'α') == ('α' ∨ ¬'α')
 
-                @test simplify(⊤ → ⊤) == ⊤
-                @test simplify(⊤ → ⊥) == ⊥
-                @test simplify(⊥ → ⊥) == ⊤
-                @test simplify(⊥ → ⊤) == ⊤
+            @test simplify(⊤ → ⊤) == ⊤
+            @test simplify(⊤ → ⊥) == ⊥
+            @test simplify(⊥ → ⊥) == ⊤
+            @test simplify(⊥ → ⊤) == ⊤
 
-                @test simplify('α' ↔ ⊤) == Atom('α')
-                @test simplify(⊤ ↔ 'α') == Atom('α')
-                @test simplify('α' ↔ ⊥) == (¬'α')
-                @test simplify(⊥ ↔ 'α') == (¬'α')
+            @test simplify('α' ↔ ⊤) == Atom('α')
+            @test simplify(⊤ ↔ 'α') == Atom('α')
+            @test simplify('α' ↔ ⊥) == (¬'α')
+            @test simplify(⊥ ↔ 'α') == (¬'α')
 
-                @test simplify(⊤ ↔ ⊤) == ⊤
-                @test simplify(⊤ ↔ ⊥) == ⊥
-                @test simplify(⊥ ↔ ⊥) == ⊤
-                @test simplify(⊥ ↔ ⊤) == ⊥
+            @test simplify(⊤ ↔ ⊤) == ⊤
+            @test simplify(⊤ ↔ ⊥) == ⊥
+            @test simplify(⊥ ↔ ⊥) == ⊤
+            @test simplify(⊥ ↔ ⊤) == ⊥
         end
 
 
@@ -138,14 +146,14 @@ using Test
 
             @test disjunctiveclauses(¬'a') == Set([clause(¬'a')])
 
-            @test disjunctiveclauses('a' ∨ 'b') == Set([clause('a',  'b')])
-            @test disjunctiveclauses('a' ∨ 'b' ∨ 'c') == Set([clause('a',  'b',  'c')])
+            @test disjunctiveclauses('a' ∨ 'b') == Set([clause('a', 'b')])
+            @test disjunctiveclauses('a' ∨ 'b' ∨ 'c') == Set([clause('a', 'b', 'c')])
 
-            @test disjunctiveclauses('a' ∧ 'b') == Set([clause('a'),  clause('b')])
-            @test disjunctiveclauses('a' ∧ 'b' ∧ 'c') == Set([clause('a'),  clause('b'),  clause('c')])
-            @test disjunctiveclauses('a' ∧ ('b' ∨ 'c')) == Set([clause('a'), clause('b',  'c')])
+            @test disjunctiveclauses('a' ∧ 'b') == Set([clause('a'), clause('b')])
+            @test disjunctiveclauses('a' ∧ 'b' ∧ 'c') == Set([clause('a'), clause('b'), clause('c')])
+            @test disjunctiveclauses('a' ∧ ('b' ∨ 'c')) == Set([clause('a'), clause('b', 'c')])
 
-            @test disjunctiveclauses(¬'a' ∨ 'b') == Set([clause(¬'a',  'b')])
+            @test disjunctiveclauses(¬'a' ∨ 'b') == Set([clause(¬'a', 'b')])
 
         end
 
@@ -159,20 +167,20 @@ using Test
         @test models(¬'a') == Set([I()])
 
         @test models('a' ∨ 'b') == Set([
-             I('a'),
-             I('b'),
-             I('a', 'b'),
-         ])
+            I('a'),
+            I('b'),
+            I('a', 'b'),
+        ])
 
         @test models(¬('a' ∨ 'b')) == Set([
             I(),
         ])
 
         @test models(¬('a' ∧ 'b')) == Set([
-             I('a'),
-             I('b'),
-             I()
-         ])
+            I('a'),
+            I('b'),
+            I()
+        ])
 
         @test models('a' → 'b') == Set([
             I(),
