@@ -127,4 +127,17 @@ export Biconditional
 Base.show(io::IO, ::Biconditional) = show(io, "↔")
 Base.print(io::IO, ::Biconditional) = print(io, "↔")
 
+"Propositional interpretation type."
+const Interpretation = Set{Atom}
+export Interpretation
+
+const KnowledgeBase = Set{Formula}
+export KnowledgeBase
+
+const Literal = Union{Atom, UnaryOperation{T, Atom}} where (T <: UnaryOperator)
+export Literal
+
+const Clause = Set{Literal}
+export Clause
+
 end

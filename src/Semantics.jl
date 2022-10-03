@@ -5,30 +5,13 @@ using Combinatorics
 using ..Syntax
 using ..Sugar
 
-"Propositional interpretation type."
-const Interpretation = Set{Atom}
-export Interpretation
-I(atoms::Union{String, Char, Int, Atom}...)::Interpretation = Interpretation(map(a -> a isa Atom ? a : Atom(a), atoms))
-export I
-
-const KnowledgeBase = Set{Formula}
-export KnowledgeBase
-K(formulas...)::KnowledgeBase = KnowledgeBase(map(a -> Base.convert(Formula, a), formulas))
-export K
-
-const Literal = Union{Atom, UnaryOperation{T, Atom}} where (T <: UnaryOperator)
-export Literal
-
-const Clause = Set{Literal}
-export Clause
-clause(α...)::Clause = Clause(map(x -> Base.convert(Formula, x), α))
-export clause
-
 "Convert a propositional formula into negation normal form." # Efficient
 function nnf(α::Formula)::Formula
+    nnf(c::Constant) = c
     nnf(α::Atom) = α
     nnf(α::UnaryOperation) = nnf(operator(α), operand(α))
     nnf(u::UnaryOperator, α::Formula) = UnaryOperation(u, nnf(α))
+    nnf(::Negation, c::Constant) = ¬c
     nnf(::Negation, α::Atom) = ¬α
     nnf(::Negation, α::UnaryOperation{Negation}) = nnf(operand(α))
     nnf(::Negation, α::BinaryOperation{Implication}) = nnf(operand1(α) ∧ ¬operand2(α))
@@ -186,7 +169,6 @@ function picocnf(α::Formula)::Tuple{Vector{Vector{Int}}, Dict{String, Int}}
     return picoclauses, namedict
 end
 picocnf(α) = picocnf(convert(Formula, α))
-export picocnf
 
 "Get atoms contained in a propositional formula." # Efficient
 atoms(α::Formula)::Set{Atom} = error("Atoms does not yet support $(typeof(α)).")
@@ -291,15 +273,13 @@ function entails(α::Formula, β::Formula)
             )
     )
 end
-entails(α, β) = entails(convert(Formula, α), convert(Formula, β))
-entails(α::Formula, β) = entails(α, convert(Formula, β))
-entails(α, β::Formula) = entails(α, convert(Formula, β))
 entails(α::Formula, ::Tautology) = istautology(α)
 entails(α::Formula, ::Contradiction) = iscontradiction(α)
 entails(::Tautology, ::Tautology) = true
 entails(::Contradiction, ::Contradiction) = true
 entails(::Contradiction, ::Tautology) = true
 entails(::Tautology, ::Contradiction) = false
+entails(α, β) = entails(convert(Formula, α), convert(Formula, β))
 
 export entails
 #⊧ = entails #I wish
