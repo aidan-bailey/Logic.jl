@@ -1,12 +1,12 @@
 module SyntaxTests
 
-include("../src/PropositionalLogic.jl")
+include("../../src/PropositionalLogic/PropositionalLogic.jl")
 using .PropositionalLogic.Syntax
 using .PropositionalLogic.Sugar
 
 using Test
 
-@testset "Syntax" begin
+@testset "PL: Syntax" begin
 
     @testset "Constant" begin
         @test Constant <: Formula

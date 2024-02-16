@@ -1,6 +1,6 @@
 module SemanticsTests
 
-include("../src/PropositionalLogic.jl")
+include("../../src/PropositionalLogic/PropositionalLogic.jl")
 using .PropositionalLogic.Syntax
 using .PropositionalLogic.Parsing
 using .PropositionalLogic.Sugar
@@ -8,7 +8,7 @@ using .PropositionalLogic.Semantics
 
 using Test
 
-@testset "Semantics" begin
+@testset "PL: Semantics" begin
 
     @testset "Aliases" begin
 
@@ -197,7 +197,6 @@ using Test
         @test entails('a' → 'b', 'a')
         @test entails('a' ↔ 'b', 'a' ∧ 'b')
         @test entails('a' ∧ 'b', 'a' ↔ 'b')
-
         @test entails(K("a", "b"), "a∧b")
 
     end

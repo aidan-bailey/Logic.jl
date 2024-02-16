@@ -1,13 +1,13 @@
 module ParsingTests
 
-include("../src/PropositionalLogic.jl")
+include("../../src/PropositionalLogic/PropositionalLogic.jl")
 using .PropositionalLogic.Syntax
 using .PropositionalLogic.Sugar
 using .PropositionalLogic.Parsing
 
 using Test
 
-@testset "Parsing" begin
+@testset "PL: Parsing" begin
 
     @testset "Atom" begin
 

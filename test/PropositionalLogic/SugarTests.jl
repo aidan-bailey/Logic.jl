@@ -1,12 +1,12 @@
 module SugarTests
 
-include("../src/PropositionalLogic.jl")
+include("../../src/PropositionalLogic/PropositionalLogic.jl")
 using .PropositionalLogic.Syntax
 using .PropositionalLogic.Sugar
 
 using Test
 
-@testset "Syntactical Sugar" begin
+@testset "PL: Syntactical Sugar" begin
 
     @testset "Constant" begin
 
