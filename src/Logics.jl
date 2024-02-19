@@ -1,4 +1,4 @@
-module Logic
+module Logics
 
 include("PropositionalLogic/PropositionalLogic.jl")
 

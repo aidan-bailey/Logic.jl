@@ -1,4 +1,4 @@
-module LogicTests
+module LogicsTests
 
 include("PropositionalLogic/PropositionalLogicTests.jl")
 
