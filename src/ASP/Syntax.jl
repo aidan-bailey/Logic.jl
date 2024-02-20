@@ -20,6 +20,8 @@ export Constant
 struct Func{N} <: Term
     name::String
     arguments:: NTuple{N, Term}
+    Func(name::String, arguments::Term...) = new{length(arguments)}(name, arguments)
+    Func(name::String, arguments::Tuple) = new{length(arguments)}(name, arguments)
 end
 export Func
 
@@ -31,6 +33,8 @@ export Atom
 struct Predicate{N} <: Atom
     name::String
     arguments::NTuple{N, Term}
+    Predicate(name::String, arguments::Term...) = new{length(arguments)}(name, arguments)
+    Predicate(name::String, arguments::Tuple) = new{length(arguments)}(name, arguments)
 end
 export Predicate
 
