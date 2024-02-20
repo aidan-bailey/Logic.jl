@@ -28,6 +28,8 @@ using Test
         @testset "Function" begin
 
             @test Func <: Term
+            @test Func{1} <: Term
+            @test Func{2} <: Term
             @test Func("f", (Variable("X"), Constant("a"))) isa Func
             @test Func("f", ()) == Func("f", ())
 
@@ -55,6 +57,14 @@ using Test
         @test Rule((), (), (Predicate("P", (Constant("a"), )), )) isa Rule
 
     end
+
+    @testset "Signature" begin
+
+        @test Signature <: Tuple
+        @test Signature((Set{Type{Predicate}}(), Set{Type{Variable}}(), Set{Type{Constant}}(), Set{Type{Func}}())) isa Signature
+
+    end
+
 
 end
 

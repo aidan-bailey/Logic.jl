@@ -38,6 +38,10 @@ struct Predicate{N} <: Atom
 end
 export Predicate
 
+"ASP signature type."
+const Signature = Tuple{Set{Type{Predicate}}, Set{Type{Variable}}, Set{Type{Constant}}, Set{Type{Func}}}
+export Signature
+
 "ASP rule type."
 struct Rule{NHead, NBody, NNegatives}
     head::NTuple{NHead, Atom}
