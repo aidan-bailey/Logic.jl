@@ -47,6 +47,15 @@ using Test
 
     end
 
+    @testset "Rule" begin
+
+        @test Rule((), (), ()) isa Rule
+        @test Rule((Predicate("P", (Constant("a"), )), ), (), ()) isa Rule
+        @test Rule((), (Predicate("P", (Constant("a"), )), ), ()) isa Rule
+        @test Rule((), (), (Predicate("P", (Constant("a"), )), )) isa Rule
+
+    end
+
 end
 
 end

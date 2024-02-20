@@ -34,4 +34,12 @@ struct Predicate{N} <: Atom
 end
 export Predicate
 
+"ASP rule type."
+struct Rule{NHead, NBody, NNegatives}
+    head::NTuple{NHead, Atom}
+    body::NTuple{NBody, Atom}
+    negatives::NTuple{NNegatives, Atom}
+end
+export Rule
+
 end
