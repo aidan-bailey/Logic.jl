@@ -92,6 +92,5 @@ export Rule
 "ASP program type."
 const Program = Set{Rule}
 export Program
-p = Predicate("p", Variable("X"), Variable("Y"))
 
 end
