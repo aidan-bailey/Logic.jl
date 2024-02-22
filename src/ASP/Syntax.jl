@@ -9,12 +9,16 @@ struct Variable <: Term
     name::String
 end
 export Variable
+name(α::Variable)::String = α.name
+export name
 
 "ASP constant type."
 struct Constant <: Term
-    value::String
+    name::String
 end
 export Constant
+name(α::Constant)::String = α.name
+export value
 
 "ASP function header type."
 struct FunctionSignature{N}
@@ -23,6 +27,10 @@ struct FunctionSignature{N}
     FunctionSignature(name::String, arity::Int) = new{arity}(name, Val(arity))
 end
 export FunctionSignature
+name(α::FunctionSignature)::String = α.name
+export name
+arity(α::FunctionSignature{N}) where N = N
+export arity
 
 "ASP value type."
 struct Func{N} <: Term
@@ -32,6 +40,13 @@ struct Func{N} <: Term
     Func(name::String, arguments::Tuple) = new{length(arguments)}(FunctionSignature(name, length(arguments)), arguments)
 end
 export Func
+name(α::Func)::String = name(α.signature)
+export name
+arguments(α::Func{N} where {N})::NTuple{N, Term} where {N} = α.arguments
+export arguments
+arity(α::Func{N}) where N = N
+export arity
+
 
 "ASP atom supertype."
 abstract type Atom end
@@ -44,6 +59,8 @@ struct PredicateSignature{N}
     PredicateSignature(name::String, arity::Int) = new{arity}(name, Val(arity))
 end
 export PredicateSignature
+name(α::PredicateSignature)::String = α.name
+export name
 
 "ASP predicate type."
 struct Predicate{N} <: Atom
@@ -53,6 +70,12 @@ struct Predicate{N} <: Atom
     Predicate(name::String, arguments::Tuple) = new{length(arguments)}(PredicateSignature(name, length(arguments)), arguments)
 end
 export Predicate
+name(α::Predicate)::String = name(α.signature)
+export name
+arguments(α::Predicate{N} where {N})::NTuple{N, Term} where {N} = α.arguments
+export arguments
+arity(::Predicate{N}) where N = N
+export arity
 
 "ASP signature type."
 const Signature = Tuple{Set{PredicateSignature}, Set{Variable}, Set{Constant}, Set{FunctionSignature}}
@@ -69,5 +92,6 @@ export Rule
 "ASP program type."
 const Program = Set{Rule}
 export Program
+p = Predicate("p", Variable("X"), Variable("Y"))
 
 end

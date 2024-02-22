@@ -14,6 +14,7 @@ using Test
             @test Variable <: Term
             @test Variable("X") isa Variable
             @test Variable("X") == Variable("X")
+            @test name(Variable("X")) == "X"
 
         end
 
@@ -22,6 +23,7 @@ using Test
             @test Constant <: Term
             @test Constant("a") isa Constant
             @test Constant("a") == Constant("a")
+            @test name(Constant("a")) == "a"
 
         end
 
@@ -31,12 +33,17 @@ using Test
 
                 @test FunctionSignature("Apple", 1) isa FunctionSignature
                 @test FunctionSignature("Apple", 1) == FunctionSignature("Apple", 1)
+                @test name(FunctionSignature("Apple", 1)) == "Apple"
+                @test arity(FunctionSignature("Apple", 1)) == 1
 
             end
 
             @test Func <: Term
             @test Func("Apple", Variable("X")) isa Func
             @test Func("Apple", Variable("X")) == Func("Apple", Variable("X"))
+            @test name(Func("Apple", Variable("X"))) == "Apple"
+            @test arguments(Func("Apple", Variable("X"))) == (Variable("X"),)
+            @test arity(Func("Apple", Variable("X"))) == 1
 
         end
 
@@ -49,6 +56,9 @@ using Test
             @test Predicate <: Atom
             @test Predicate("p" ,Variable("X"), Constant("a")) isa Predicate
             @test Predicate("p", (Variable("X"))) == Predicate("p", (Variable("X")))
+            @test name(Predicate("p", (Variable("X")))) == "p"
+            @test arguments(Predicate("p", (Variable("X"), Constant("a")))) == (Variable("X"), Constant("a"))
+            @test arity(Predicate("p", (Variable("X"), Constant("a"))) ) == 2
         end
 
     end
