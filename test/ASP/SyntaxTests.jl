@@ -68,6 +68,13 @@ using Test
 
     end
 
+    @testset "Program" begin
+
+        @test Program() isa Program
+        @test Program() == Program()
+
+    end
+
 
 end
 

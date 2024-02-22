@@ -66,4 +66,8 @@ struct Rule{NHead, NBody, NNegatives}
 end
 export Rule
 
+"ASP program type."
+const Program = Set{Rule}
+export Program
+
 end
