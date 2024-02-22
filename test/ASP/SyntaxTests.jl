@@ -27,11 +27,16 @@ using Test
 
         @testset "Function" begin
 
+            @testset "Function Signature" begin
+
+                @test FunctionSignature("Apple", 1) isa FunctionSignature
+                @test FunctionSignature("Apple", 1) == FunctionSignature("Apple", 1)
+
+            end
+
             @test Func <: Term
-            @test Func{1} <: Term
-            @test Func{2} <: Term
-            @test Func("f", (Variable("X"), Constant("a"))) isa Func
-            @test Func("f", ()) == Func("f", ())
+            @test Func("Apple", Variable("X")) isa Func
+            @test Func("Apple", Variable("X")) == Func("Apple", Variable("X"))
 
         end
 
@@ -42,9 +47,8 @@ using Test
         @testset "Predicate" begin
 
             @test Predicate <: Atom
-            @test Predicate("p", (Variable("X"), Constant("a"))) isa Predicate
-            @test Predicate("p", ()) == Predicate("p", ())
-
+            @test Predicate("p" ,Variable("X"), Constant("a")) isa Predicate
+            @test Predicate("p", (Variable("X"))) == Predicate("p", (Variable("X")))
         end
 
     end
@@ -52,16 +56,15 @@ using Test
     @testset "Rule" begin
 
         @test Rule((), (), ()) isa Rule
-        @test Rule((Predicate("P", (Constant("a"), )), ), (), ()) isa Rule
-        @test Rule((), (Predicate("P", (Constant("a"), )), ), ()) isa Rule
-        @test Rule((), (), (Predicate("P", (Constant("a"), )), )) isa Rule
+        @test Rule((), (), ()) == Rule((), (), ())
 
     end
 
     @testset "Signature" begin
 
         @test Signature <: Tuple
-        @test Signature((Set{Type{Predicate}}(), Set{Type{Variable}}(), Set{Type{Constant}}(), Set{Type{Func}}())) isa Signature
+        @test Signature((Set{PredicateSignature}(), Set{Variable}(), Set{Constant}(), Set{FunctionSignature}())) isa Signature
+        @test Signature((Set{PredicateSignature}(), Set{Variable}(), Set{Constant}(), Set{FunctionSignature}())) == Signature((Set{PredicateSignature}(), Set{Variable}(), Set{Constant}(), Set{FunctionSignature}()))
 
     end
 

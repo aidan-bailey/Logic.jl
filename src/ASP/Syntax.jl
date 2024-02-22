@@ -16,12 +16,20 @@ struct Constant <: Term
 end
 export Constant
 
-"ASP function type."
-struct Func{N} <: Term
+"ASP function header type."
+struct FunctionSignature{N}
     name::String
+    arityVal::Val{N}
+    FunctionSignature(name::String, arity::Int) = new{arity}(name, Val(arity))
+end
+export FunctionSignature
+
+"ASP value type."
+struct Func{N} <: Term
+    signature::FunctionSignature{N}
     arguments:: NTuple{N, Term}
-    Func(name::String, arguments::Term...) = new{length(arguments)}(name, arguments)
-    Func(name::String, arguments::Tuple) = new{length(arguments)}(name, arguments)
+    Func(name::String, arguments::Term...) = new{length(arguments)}(FunctionSignature(name, length(arguments)), arguments)
+    Func(name::String, arguments::Tuple) = new{length(arguments)}(FunctionSignature(name, length(arguments)), arguments)
 end
 export Func
 
@@ -29,17 +37,25 @@ export Func
 abstract type Atom end
 export Atom
 
+"ASP predicate signature type."
+struct PredicateSignature{N}
+    name::String
+    arityVal::Val{N}
+    PredicateSignature(name::String, arity::Int) = new{arity}(name, Val(arity))
+end
+export PredicateSignature
+
 "ASP predicate type."
 struct Predicate{N} <: Atom
-    name::String
-    arguments::NTuple{N, Term}
-    Predicate(name::String, arguments::Term...) = new{length(arguments)}(name, arguments)
-    Predicate(name::String, arguments::Tuple) = new{length(arguments)}(name, arguments)
+    signature::PredicateSignature{N}
+    arguments:: NTuple{N, Term}
+    Predicate(name::String, arguments::Term...) = new{length(arguments)}(PredicateSignature(name, length(arguments)), arguments)
+    Predicate(name::String, arguments::Tuple) = new{length(arguments)}(PredicateSignature(name, length(arguments)), arguments)
 end
 export Predicate
 
 "ASP signature type."
-const Signature = Tuple{Set{Type{Predicate}}, Set{Type{Variable}}, Set{Type{Constant}}, Set{Type{Func}}}
+const Signature = Tuple{Set{PredicateSignature}, Set{Variable}, Set{Constant}, Set{FunctionSignature}}
 export Signature
 
 "ASP rule type."
